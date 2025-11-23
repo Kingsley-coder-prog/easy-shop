@@ -10,7 +10,12 @@ const {
   deleteProduct,
 } = require("./models/productsSheet");
 
-const { getOrders } = require("./models/ordersSheet");
+const {
+  getOrders,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+} = require("./models/ordersSheet");
 
 const app = express();
 app.use(cors());
@@ -28,6 +33,15 @@ app.delete("/api/products/:id", async (req, res) =>
 );
 
 app.get("/api/orders", async (req, res) => res.json(await getOrders()));
+app.post("/api/orders", async (req, res) =>
+  res.json(await createOrder(req.body))
+);
+app.put("/api/orders/:id", async (req, res) =>
+  res.json(await updateOrder(req.params.id, req.body))
+);
+app.delete("/api/orders/:id", async (req, res) =>
+  res.json(await deleteOrder(req.params.id))
+);
 
 app.listen(process.env.PORT, () =>
   console.log(`Server running on port ${process.env.PORT}`)

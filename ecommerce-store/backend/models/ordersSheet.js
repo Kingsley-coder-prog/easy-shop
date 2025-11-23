@@ -1,7 +1,7 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
 
 const ORDERS_RANGE = "Orders!A2:Z"; // Start reading from row 2
-const SHEET_ID = 1; // ⚠️ CHANGE THIS — check your sheet tabs index!
+// const SHEET_ID = 1; // ⚠️ CHANGE THIS — check your sheet tabs index!
 
 // Order table headers — MUST MATCH YOUR SHEET HEADERS
 const HEADERS = [
@@ -84,7 +84,7 @@ async function deleteOrder(order_id) {
         {
           deleteDimension: {
             range: {
-              sheetId: SHEET_ID, // ⚠️ CHECK THIS ID!!!
+              sheetId: 1, // ⚠️ CHECK THIS ID!!!
               dimension: "ROWS",
               startIndex: rowNumber - 1,
               endIndex: rowNumber,
