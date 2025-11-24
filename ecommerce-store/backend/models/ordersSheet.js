@@ -64,6 +64,9 @@ async function updateOrder(order_id, newData) {
     requestBody: { values: [updatedRow] },
   });
 
+  console.log("Searching for order:", order_id);
+  console.log("Index found:", index);
+
   return { success: true, message: "Order updated" };
 }
 
@@ -84,7 +87,7 @@ async function deleteOrder(order_id) {
         {
           deleteDimension: {
             range: {
-              sheetId: 1, // ⚠️ CHECK THIS ID!!!
+              sheetId: 1,
               dimension: "ROWS",
               startIndex: rowNumber - 1,
               endIndex: rowNumber,

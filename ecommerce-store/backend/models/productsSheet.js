@@ -2,7 +2,14 @@ const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
 
 const PRODUCTS_RANGE = "Products!A2:Z";
 
-const HEADERS = ["product_id", "name", "price_naira", "description", "image"];
+const HEADERS = [
+  "product_id",
+  "name",
+  "price_naira",
+  "description",
+  "categories",
+  "image",
+];
 
 // 📌 Get all products
 async function getProducts() {
@@ -20,8 +27,8 @@ async function getProducts() {
   });
 }
 
-// 📌 Add product
-async function addProduct(data) {
+// 📌 Create product
+async function createProduct(data) {
   const sheets = await getSheets();
   const newRow = HEADERS.map((h) => data[h] || "");
 
@@ -52,6 +59,9 @@ async function updateProduct(product_id, newData) {
     valueInputOption: "RAW",
     requestBody: { values: [rowValues] },
   });
+
+  console.log("Searching for product:", product_id);
+  console.log("Index found:", index);
 
   return { success: true, message: "Product updated" };
 }
@@ -86,4 +96,4 @@ async function deleteProduct(product_id) {
   return { success: true }; // return value
 }
 
-module.exports = { getProducts, addProduct, updateProduct, deleteProduct };
+module.exports = { getProducts, createProduct, updateProduct, deleteProduct };

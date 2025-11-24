@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const {
   getProducts,
-  addProduct,
+  createProduct,
 
   updateProduct,
   deleteProduct,
@@ -21,25 +21,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/products", async (req, res) => res.json(await getProducts()));
-app.post("/api/products", async (req, res) =>
-  res.json(await addProduct(req.body))
+app.get("/api/v1/products", async (req, res) => res.json(await getProducts()));
+app.post("/api/v1/products", async (req, res) =>
+  res.json(await createProduct(req.body))
 );
-app.put("/api/products/:id", async (req, res) =>
+app.patch("/api/v1/products/:id", async (req, res) =>
   res.json(await updateProduct(req.params.id, req.body))
 );
-app.delete("/api/products/:id", async (req, res) =>
+app.delete("/api/v1/products/:id", async (req, res) =>
   res.json(await deleteProduct(req.params.id))
 );
 
-app.get("/api/orders", async (req, res) => res.json(await getOrders()));
-app.post("/api/orders", async (req, res) =>
+app.get("/api/v1/orders", async (req, res) => res.json(await getOrders()));
+app.post("/api/v1/orders", async (req, res) =>
   res.json(await createOrder(req.body))
 );
-app.put("/api/orders/:id", async (req, res) =>
+app.patch("/api/v1/orders/:id", async (req, res) =>
   res.json(await updateOrder(req.params.id, req.body))
 );
-app.delete("/api/orders/:id", async (req, res) =>
+app.delete("/api/v1/orders/:id", async (req, res) =>
   res.json(await deleteOrder(req.params.id))
 );
 
