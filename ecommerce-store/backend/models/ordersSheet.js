@@ -1,7 +1,8 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
+import { v4 as uuidv4 } from "uuid";
 
 const ORDERS_RANGE = "Orders!A2:Z"; // Start reading from row 2
-// const SHEET_ID = 1; // ⚠️ CHANGE THIS — check your sheet tabs index!
+// const SHEET_ID = 1;
 
 // Order table headers — MUST MATCH YOUR SHEET HEADERS
 const HEADERS = [
@@ -14,6 +15,11 @@ const HEADERS = [
   "created_at",
   "stripe_session_id",
 ];
+const STATUS_ENUM = ["pending", "ready", "not_available", "cancelled"];
+
+// if (newData.status && !STATUS_ENUM.includes(newData.status)) {
+//   return { error: "Invalid status", allowed: STATUS_ENUM };
+// }
 
 // 📌 Get All Orders
 async function getOrders() {
