@@ -139,7 +139,7 @@ async function deleteProduct(product_id) {
     },
   });
 
-  return { success: true }; // return value
+  return { success: true };
 }
 
 module.exports = { getProducts, createProduct, updateProduct, deleteProduct };
