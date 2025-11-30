@@ -1,0 +1,12 @@
+// if (!CATEGORY_ENUM.includes(newData.category)) {
+//   return { error: "Invalid category", allowed: CATEGORY_ENUM };
+// }
+
+// async function getProductsByCategory(category) {
+//   const products = await getProducts();
+//   return products.filter((p) => p.category === category);
+// }
+
+// app.get("/api/products/category/:category", async (req, res) => {
+//   res.json(await getProductsByCategory(req.params.category));
+// });

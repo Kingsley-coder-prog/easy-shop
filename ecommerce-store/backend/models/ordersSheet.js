@@ -1,5 +1,5 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 
 const ORDERS_RANGE = "Orders!A2:Z"; // Start reading from row 2
 // const SHEET_ID = 1;

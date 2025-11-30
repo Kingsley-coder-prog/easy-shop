@@ -1,6 +1,6 @@
+const { PRODUCT_CATEGORIES } = require("../utils/enum.js");
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets.js");
-import { PRODUCT_CATEGORIES } from "../utils/enum.js";
-import { v4 as uuidv4 } from "uuid";
+const { generateUUID } = require("../utils/uuid.js");
 
 const PRODUCTS_RANGE = "Products!A2:Z";
 
@@ -13,19 +13,6 @@ const HEADERS = [
   "image",
   "created_at",
 ];
-
-// if (!CATEGORY_ENUM.includes(newData.category)) {
-//   return { error: "Invalid category", allowed: CATEGORY_ENUM };
-// }
-
-// async function getProductsByCategory(category) {
-//   const products = await getProducts();
-//   return products.filter((p) => p.category === category);
-// }
-
-// app.get("/api/products/category/:category", async (req, res) => {
-//   res.json(await getProductsByCategory(req.params.category));
-// });
 
 // 📌 Get all products
 async function getProducts() {
@@ -43,21 +30,6 @@ async function getProducts() {
   });
 }
 
-// 📌 Create product
-// async function createProduct(data) {
-//   const sheets = await getSheets();
-//   const newRow = HEADERS.map((h) => data[h] || "");
-
-//   await sheets.spreadsheets.values.append({
-//     spreadsheetId: SPREADSHEET_ID,
-//     range: PRODUCTS_RANGE,
-//     valueInputOption: "RAW",
-//     requestBody: { values: [newRow] },
-//   });
-
-//   return { success: true, message: "Product added successfully" };
-// }
-
 async function createProduct(data) {
   const sheets = await getSheets();
   if (!PRODUCT_CATEGORIES.includes(data.category)) {
@@ -67,7 +39,7 @@ async function createProduct(data) {
   }
 
   const newProduct = {
-    product_id: uuidv4(),
+    product_id: generateUUID(),
     name: data.name || "",
     price_naira: data.price_naira || 0,
     description: data.description || "",
