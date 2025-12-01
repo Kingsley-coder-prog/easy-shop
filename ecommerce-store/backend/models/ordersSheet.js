@@ -15,13 +15,12 @@ const HEADERS = [
   "created_at",
   "stripe_session_id",
 ];
-const STATUS_ENUM = ["pending", "ready", "not_available", "cancelled"];
 
 // if (newData.status && !STATUS_ENUM.includes(newData.status)) {
 //   return { error: "Invalid status", allowed: STATUS_ENUM };
 // }
 
-// 📌 Get All Orders
+// Get All Orders
 async function getOrders() {
   const sheets = await getSheets();
   const res = await sheets.spreadsheets.values.get({
@@ -37,7 +36,7 @@ async function getOrders() {
   });
 }
 
-// 📌 Create Order (Insert New Row)
+// Create Order (Insert New Row)
 async function createOrder(data) {
   const sheets = await getSheets();
   const newRow = HEADERS.map((h) => data[h] || "");
@@ -52,7 +51,7 @@ async function createOrder(data) {
   return { success: true, message: "Order added successfully" };
 }
 
-// 📌 Update Order (by order_id)
+// Update Order (by order_id)
 async function updateOrder(order_id, newData) {
   const orders = await getOrders();
   const index = orders.findIndex((o) => o.order_id == order_id);
@@ -76,7 +75,7 @@ async function updateOrder(order_id, newData) {
   return { success: true, message: "Order updated" };
 }
 
-// 📌 Delete Order (by order_id)
+// Delete Order (by order_id)
 async function deleteOrder(order_id) {
   const orders = await getOrders();
   const index = orders.findIndex((o) => o.order_id == order_id);

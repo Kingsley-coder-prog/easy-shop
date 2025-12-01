@@ -5,7 +5,6 @@ const cors = require("cors");
 const {
   getProducts,
   createProduct,
-
   updateProduct,
   deleteProduct,
 } = require("./models/productsSheet");
@@ -22,6 +21,11 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/api/v1/products", async (req, res) => res.json(await getProducts()));
+app.get("/api/v1/products/category/:category", async (req, res) => {
+  const category = req.params.category;
+  const products = await getProducts(category);
+  res.json(products);
+});
 app.post("/api/v1/products", async (req, res) =>
   res.json(await createProduct(req.body))
 );

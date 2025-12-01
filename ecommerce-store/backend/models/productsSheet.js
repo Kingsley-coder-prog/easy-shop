@@ -14,8 +14,8 @@ const HEADERS = [
   "created_at",
 ];
 
-// 📌 Get all products
-async function getProducts() {
+// Get all products
+async function getProducts(filterCategory = null) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
@@ -23,11 +23,18 @@ async function getProducts() {
   });
 
   const rows = response.data.values || [];
-  return rows.map((row) => {
+  let products = rows.map((row) => {
     let obj = {};
     HEADERS.forEach((key, i) => (obj[key] = row[i] || ""));
     return obj;
   });
+
+  if (filterCategory) {
+    products = products.filter(
+      (p) => p.category.toLowerCase() === filterCategory.toLowerCase()
+    );
+  }
+  return products;
 }
 
 async function createProduct(data) {
@@ -60,7 +67,7 @@ async function createProduct(data) {
   return { message: "Product created successfully", product: newProduct };
 }
 
-// 📌 Update product by ID
+// Update product by ID
 async function updateProduct(product_id, newData) {
   const products = await getProducts();
   const index = products.findIndex((p) => p.product_id == product_id);
@@ -84,7 +91,7 @@ async function updateProduct(product_id, newData) {
   return { success: true, message: "Product updated" };
 }
 
-// 📌 Delete product
+// Delete product
 async function deleteProduct(product_id) {
   const products = await getProducts();
   const index = products.findIndex((p) => p.product_id == product_id);
@@ -111,7 +118,7 @@ async function deleteProduct(product_id) {
     },
   });
 
-  return { success: true };
+  return { success: true, message: `Product ${product_id} deleted` };
 }
 
 module.exports = { getProducts, createProduct, updateProduct, deleteProduct };
