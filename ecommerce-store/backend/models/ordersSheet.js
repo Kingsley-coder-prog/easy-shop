@@ -30,7 +30,7 @@ function objectToRow(obj) {
 }
 
 // Get All Orders
-async function getOrders(filterStatus = null) {
+async function getOrdersService(filterStatus = null) {
   const sheets = await getSheets();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
@@ -49,7 +49,7 @@ async function getOrders(filterStatus = null) {
 }
 
 // Create Order (Insert New Row)
-async function createOrder(data) {
+async function createOrderService(data) {
   const sheets = await getSheets();
 
   // Validate Status
@@ -84,7 +84,7 @@ async function createOrder(data) {
 }
 
 // Update Order (by order_id)
-async function updateOrder(order_id, newData) {
+async function updateOrderService(order_id, newData) {
   const orders = await getOrders();
   const index = orders.findIndex((o) => o.order_id == order_id);
   if (index === -1) return { error: "Order not found" };
@@ -112,7 +112,7 @@ async function updateOrder(order_id, newData) {
 }
 
 // Delete Order (by order_id)
-async function deleteOrder(order_id) {
+async function deleteOrderService(order_id) {
   const orders = await getOrders();
   const index = orders.findIndex((o) => o.order_id == order_id);
   if (index === -1) return { error: "Order not found" };
@@ -143,8 +143,8 @@ async function deleteOrder(order_id) {
 }
 
 module.exports = {
-  getOrders,
-  createOrder,
-  updateOrder,
-  deleteOrder,
+  getOrdersService,
+  createOrderService,
+  updateOrderService,
+  deleteOrderService,
 };
