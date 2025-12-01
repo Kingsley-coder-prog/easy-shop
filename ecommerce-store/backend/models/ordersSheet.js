@@ -1,10 +1,10 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
 // import { v4 as uuidv4 } from "uuid";
+const { ORDER_STATUS } = require("../utils/enum");
+const { generateUUID } = require("../utils/uuid.js");
 
 const ORDERS_RANGE = "Orders!A2:Z"; // Start reading from row 2
-// const SHEET_ID = 1;
 
-// Order table headers — MUST MATCH YOUR SHEET HEADERS
 const HEADERS = [
   "order_id",
   "user_name",
@@ -16,12 +16,21 @@ const HEADERS = [
   "stripe_session_id",
 ];
 
-// if (newData.status && !STATUS_ENUM.includes(newData.status)) {
-//   return { error: "Invalid status", allowed: STATUS_ENUM };
-// }
+// Convert Row ➜ Object
+function rowToObject(row) {
+  return HEADERS.reduce((obj, key, i) => {
+    obj[key] = row[i] || "";
+    return obj;
+  }, {});
+}
+
+// Convert Object ➜ Row
+function objectToRow(obj) {
+  return HEADERS.map((key) => obj[key] || "");
+}
 
 // Get All Orders
-async function getOrders() {
+async function getOrders(filterStatus = null) {
   const sheets = await getSheets();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
@@ -29,17 +38,37 @@ async function getOrders() {
   });
 
   const rows = res.data.values || [];
-  return rows.map((row) => {
-    let obj = {};
-    HEADERS.forEach((key, i) => (obj[key] = row[i] || ""));
-    return obj;
-  });
+  let orders = rows.map((row) => rowToObject(row));
+
+  if (filterStatus) {
+    orders = orders.filter(
+      (o) => o.status.toLowerCase() === filterStatus.toLowerCase()
+    );
+  }
+  return orders;
 }
 
 // Create Order (Insert New Row)
 async function createOrder(data) {
   const sheets = await getSheets();
-  const newRow = HEADERS.map((h) => data[h] || "");
+
+  // Validate Status
+  if (!ORDER_STATUS.includes(data.status)) {
+    data.status = "Pending";
+  }
+
+  const newOrder = {
+    order_id: generateUUID(),
+    user_name: data.user_name || "",
+    email: data.email || "",
+    items_json: JSON.stringify(data.items_json || []),
+    amount_naira: Number(data.amount_naira) || 0,
+    status: data.status,
+    created_at: new Date().toISOString(),
+    stripe_session_id: data.stripe_session_id || "",
+  };
+
+  const newRow = objectToRow(newOrder);
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
@@ -48,7 +77,10 @@ async function createOrder(data) {
     requestBody: { values: [newRow] },
   });
 
-  return { success: true, message: "Order added successfully" };
+  return {
+    message: "Order added successfully",
+    order: { ...newOrder, items_json: JSON.parse(newOrder.items_json) },
+  };
 }
 
 // Update Order (by order_id)
@@ -60,7 +92,11 @@ async function updateOrder(order_id, newData) {
   const rowNumber = index + 2; // +2 because data starts at row 2
   const sheets = await getSheets();
 
-  const updatedRow = HEADERS.map((h) => newData[h] || orders[index][h]);
+  // Merge old values with new ones
+  const updatedOrder = { ...orders[index], ...newData };
+  updatedOrder.items_json = JSON.stringify(updatedOrder.items_json || []);
+
+  const updatedRow = objectToRow(updateOrder);
 
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
@@ -72,7 +108,7 @@ async function updateOrder(order_id, newData) {
   console.log("Searching for order:", order_id);
   console.log("Index found:", index);
 
-  return { success: true, message: "Order updated" };
+  return { message: "Order updated", order: updateOrder };
 }
 
 // Delete Order (by order_id)
