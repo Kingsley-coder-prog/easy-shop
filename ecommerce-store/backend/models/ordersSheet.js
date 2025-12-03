@@ -38,14 +38,23 @@ async function getOrdersService(filterStatus = null) {
   });
 
   const rows = res.data.values || [];
-  let orders = rows.map((row) => rowToObject(row));
+  let orders = rows.map((row) => {
+    const order = rowToObject(row);
+    try {
+      order.items_json = JSON.parse(order.items_json);
+    } catch (err) {
+      order.items_json = [];
+    }
+
+    return order;
+  });
 
   if (filterStatus) {
     orders = orders.filter(
       (o) => o.status.toLowerCase() === filterStatus.toLowerCase()
     );
   }
-  return orders;
+  return { numberOfOrders: orders.length, orders };
 }
 
 // Create Order (Insert New Row)
@@ -85,7 +94,7 @@ async function createOrderService(data) {
 
 // Update Order (by order_id)
 async function updateOrderService(order_id, newData) {
-  const orders = await getOrders();
+  const { orders } = await getOrdersService();
   const index = orders.findIndex((o) => o.order_id == order_id);
   if (index === -1) return { error: "Order not found" };
 
@@ -96,7 +105,7 @@ async function updateOrderService(order_id, newData) {
   const updatedOrder = { ...orders[index], ...newData };
   updatedOrder.items_json = JSON.stringify(updatedOrder.items_json || []);
 
-  const updatedRow = objectToRow(updateOrder);
+  const updatedRow = objectToRow(updatedOrder);
 
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
@@ -105,41 +114,82 @@ async function updateOrderService(order_id, newData) {
     requestBody: { values: [updatedRow] },
   });
 
-  console.log("Searching for order:", order_id);
-  console.log("Index found:", index);
+  try {
+    updatedOrder.items_json = JSON.parse(updatedOrder.items_json);
+  } catch (err) {
+    updatedOrder.items_json = [];
+  }
 
-  return { message: "Order updated", order: updateOrder };
+  return { message: "Order updated", order: updatedOrder };
 }
 
 // Delete Order (by order_id)
 async function deleteOrderService(order_id) {
-  const orders = await getOrders();
-  const index = orders.findIndex((o) => o.order_id == order_id);
-  if (index === -1) return { error: "Order not found" };
+  try {
+    console.log("Deleting order:", order_id);
 
-  const rowNumber = index + 2;
+    const result = await getOrdersService(); // <-- result = { numberOfOrders, orders: [...] }
+    const orders = result.orders; // <-- extract the array
 
-  const sheets = await getSheets();
+    console.log("Orders loaded:", orders.length);
 
-  await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: SPREADSHEET_ID,
-    requestBody: {
-      requests: [
-        {
-          deleteDimension: {
-            range: {
-              sheetId: 1,
-              dimension: "ROWS",
-              startIndex: rowNumber - 1,
-              endIndex: rowNumber,
+    if (!Array.isArray(orders)) {
+      throw new Error("Orders is not an array");
+    }
+
+    const index = orders.findIndex((o) => o.order_id == order_id);
+    console.log("Index found:", index);
+
+    if (index === -1) {
+      return { error: "Order not found" };
+    }
+
+    // Spreadsheet rows start at 1, header is row 1, first order is row 2
+    const rowNumber = index + 2;
+
+    // GET SHEET ID CORRECTLY — I WILL SHOW YOU HOW BELOW
+    const sheetId = await getOrdersSheetId();
+
+    const sheets = await getSheets();
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      requestBody: {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: sheetId,
+                dimension: "ROWS",
+                startIndex: rowNumber - 1,
+                endIndex: rowNumber,
+              },
             },
           },
-        },
-      ],
-    },
+        ],
+      },
+    });
+
+    return { success: true, message: "Order deleted" };
+  } catch (err) {
+    console.error("DELETE ORDER ERROR:", err);
+    throw err;
+  }
+}
+
+async function getOrdersSheetId() {
+  const sheets = await getSheets();
+  const metadata = await sheets.spreadsheets.get({
+    spreadsheetId: SPREADSHEET_ID,
   });
 
-  return { success: true, message: "Order deleted" };
+  const sheet = metadata.data.sheets.find(
+    (s) => s.properties.title === "Orders"
+  );
+
+  if (!sheet) throw new Error("Orders sheet not found");
+
+  return sheet.properties.sheetId;
 }
 
 module.exports = {

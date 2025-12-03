@@ -15,7 +15,7 @@ const HEADERS = [
 ];
 
 // Get all products
-async function getProducts(filterCategory = null) {
+async function getProductsService(filterCategory = null) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
@@ -37,7 +37,7 @@ async function getProducts(filterCategory = null) {
   return products;
 }
 
-async function createProduct(data) {
+async function createProductService(data) {
   const sheets = await getSheets();
   if (!PRODUCT_CATEGORIES.includes(data.category)) {
     return {
@@ -68,8 +68,8 @@ async function createProduct(data) {
 }
 
 // Update product by ID
-async function updateProduct(product_id, newData) {
-  const products = await getProducts();
+async function updateProductService(product_id, newData) {
+  const products = await getProductsService();
   const index = products.findIndex((p) => p.product_id == product_id);
   if (index === -1) return { error: "Product not found" };
 
@@ -92,12 +92,13 @@ async function updateProduct(product_id, newData) {
 }
 
 // Delete product
-async function deleteProduct(product_id) {
-  const products = await getProducts();
+async function deleteProductService(product_id) {
+  const products = await getProductsService();
   const index = products.findIndex((p) => p.product_id == product_id);
   if (index === -1) return { error: "Product not found" };
 
   const rowNumber = index + 2;
+  const sheetId = await getOrdersSheetId();
   const sheets = await getSheets();
 
   await sheets.spreadsheets.batchUpdate({
@@ -107,7 +108,7 @@ async function deleteProduct(product_id) {
         {
           deleteDimension: {
             range: {
-              sheetId: 0,
+              sheetId: sheetId,
               dimension: "ROWS",
               startIndex: rowNumber - 1,
               endIndex: rowNumber,
@@ -121,4 +122,24 @@ async function deleteProduct(product_id) {
   return { success: true, message: `Product ${product_id} deleted` };
 }
 
-module.exports = { getProducts, createProduct, updateProduct, deleteProduct };
+async function getOrdersSheetId() {
+  const sheets = await getSheets();
+  const metadata = await sheets.spreadsheets.get({
+    spreadsheetId: SPREADSHEET_ID,
+  });
+
+  const sheet = metadata.data.sheets.find(
+    (s) => s.properties.title === "Products"
+  );
+
+  if (!sheet) throw new Error("Orders sheet not found");
+
+  return sheet.properties.sheetId;
+}
+
+module.exports = {
+  getProductsService,
+  createProductService,
+  updateProductService,
+  deleteProductService,
+};
