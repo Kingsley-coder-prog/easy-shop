@@ -1,5 +1,4 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
-// import { v4 as uuidv4 } from "uuid";
 const { ORDER_STATUS } = require("../utils/enum");
 const { generateUUID } = require("../utils/uuid.js");
 
@@ -147,7 +146,7 @@ async function deleteOrderService(order_id) {
     // Spreadsheet rows start at 1, header is row 1, first order is row 2
     const rowNumber = index + 2;
 
-    // GET SHEET ID CORRECTLY — I WILL SHOW YOU HOW BELOW
+    // GET SHEET ID CORRECTLY
     const sheetId = await getOrdersSheetId();
 
     const sheets = await getSheets();
