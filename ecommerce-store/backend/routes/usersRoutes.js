@@ -2,17 +2,17 @@
 const express = require("express");
 const router = express.Router();
 const { register, login } = require("../controllers/authController");
+const { auth, adminOnly } = require("../middlewares/authMiddleware");
 const {
   getCurrentUser,
   listUsers,
   adminUpdateUser,
   adminDeleteUser,
 } = require("../controllers/userController");
-const { auth, adminOnly } = require("../middleware/authMiddleware");
 
 // Public
-router.post("/register", register);
-router.post("/login", login);
+router.route("/register").post(register);
+router.route("/login").post(login);
 
 // Protected
 router.get("/getCurrentUser", auth, getCurrentUser);

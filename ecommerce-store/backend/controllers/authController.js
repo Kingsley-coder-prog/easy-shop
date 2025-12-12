@@ -70,6 +70,8 @@ async function login(req, res) {
       role: user.role,
       created_at: user.created_at,
     };
+    console.log("Login attempt email:", email);
+    console.log("Found user:", user);
 
     return res
       .status(StatusCodes.OK)
