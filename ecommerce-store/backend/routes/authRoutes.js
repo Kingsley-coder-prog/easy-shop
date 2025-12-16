@@ -3,9 +3,11 @@ const express = require("express");
 const router = express.Router();
 const {
   register,
-  login,
-  logout,
   registerAdmin,
+  login,
+  refresh,
+  logout,
+  logoutAll,
 } = require("../controllers/authController");
 const { auth, adminOnly } = require("../middlewares/authMiddleware");
 
@@ -13,6 +15,8 @@ const { auth, adminOnly } = require("../middlewares/authMiddleware");
 router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/register-admin").post(auth, adminOnly, registerAdmin);
+router.route("/refresh").post(refresh);
 router.route("/logout").get(auth, logout);
+router.route("/logout-all").get(auth, logoutAll);
 
 module.exports = router;

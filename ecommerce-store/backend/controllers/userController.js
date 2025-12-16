@@ -7,6 +7,7 @@ const {
   deleteUser,
   findUserById,
 } = require("../models/usersSheet");
+const { revokeAllUserRefreshTokens } = require("../models/refreshTokensSheet");
 
 // get current user (requires auth middleware to set req.user)
 async function getCurrentUser(req, res) {
@@ -124,8 +125,10 @@ async function updateUserPassword(req, res) {
       return res.status(result.status).json({ error: result.error });
     }
 
+    await revokeAllUserRefreshTokens(user_id);
+
     return res.status(StatusCodes.OK).json({
-      message: "Password updated successfully",
+      message: "Password updated successfully. Please log in again.",
     });
   } catch (err) {
     console.error("UPDATE PASSWORD ERROR", err);

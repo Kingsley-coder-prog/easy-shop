@@ -9,9 +9,16 @@ const {
 } = require("../models/usersSheet");
 const jwt = require("jsonwebtoken");
 const { blacklistToken } = require("../utils/tokenBlacklist");
+const {
+  createRefreshToken,
+  findRefreshToken,
+  revokeRefreshToken,
+  revokeAllUserRefreshTokens,
+} = require("../models/refreshTokensSheet");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
-const JWT_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN;
+const ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN;
+const REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN;
 
 // register
 async function register(req, res) {
@@ -32,10 +39,20 @@ async function register(req, res) {
 
     const user = result.user;
     // generate token (exclude password_hash in token payload)
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { user_id: user.user_id, role: user.role },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: ACCESS_EXPIRES_IN }
+    );
+
+    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
+      expiresIn: REFRESH_EXPIRES_IN,
+    });
+
+    await createRefreshToken(
+      user.user_id,
+      refreshToken,
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     );
 
     // return safe user object
@@ -52,7 +69,8 @@ async function register(req, res) {
         ? "First user registered as administrator"
         : "User registered",
       user: safeUser,
-      token,
+      accessToken,
+      refreshToken,
     });
   } catch (err) {
     console.error("REGISTER ERROR", err);
@@ -83,10 +101,20 @@ async function registerAdmin(req, res) {
     }
 
     const user = result.user;
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { user_id: user.user_id, role: user.role },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: ACCESS_EXPIRES_IN }
+    );
+
+    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
+      expiresIn: REFRESH_EXPIRES_IN,
+    });
+
+    await createRefreshToken(
+      user.user_id,
+      refreshToken,
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     );
 
     const safeUser = {
@@ -100,7 +128,8 @@ async function registerAdmin(req, res) {
     return res.status(StatusCodes.CREATED).json({
       message: "Administrator account created",
       user: safeUser,
-      token,
+      accessToken,
+      refreshToken,
     });
   } catch (err) {
     console.error("ADMIN REGISTER ERROR", err);
@@ -121,11 +150,23 @@ async function login(req, res) {
     if (!match) {
       throw new CustomError.BadRequestError("Invalid credentials");
     }
-    const token = jwt.sign(
+
+    const accessToken = jwt.sign(
       { user_id: user.user_id, role: user.role },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: ACCESS_EXPIRES_IN }
     );
+
+    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
+      expiresIn: REFRESH_EXPIRES_IN,
+    });
+
+    await createRefreshToken(
+      user.user_id,
+      refreshToken,
+      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    );
+
     const safeUser = {
       user_id: user.user_id,
       name: user.name,
@@ -134,21 +175,56 @@ async function login(req, res) {
       created_at: user.created_at,
     };
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Logged in", user: safeUser, token });
+    return res.status(StatusCodes.OK).json({
+      message: "Logged in",
+      user: safeUser,
+      accessToken,
+      refreshToken,
+    });
   } catch (err) {
     console.error("LOGIN ERROR", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
 
-// logout
+async function refresh(req, res) {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken)
+      return res.status(401).json({ error: "Authentication invalid" });
+
+    const stored = await findRefreshToken(refreshToken);
+    if (!stored)
+      return res.status(401).json({ error: "Authentication invalid" });
+
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, JWT_SECRET);
+    } catch {
+      return res.status(401).json({ error: "Authentication invalid" });
+    }
+
+    const accessToken = jwt.sign({ user_id: decoded.user_id }, JWT_SECRET, {
+      expiresIn: ACCESS_EXPIRES_IN,
+    });
+
+    return res.json({ accessToken });
+  } catch (err) {
+    console.error("REFRESH ERROR", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
+// logout (single device)
 async function logout(req, res) {
   try {
     // JWT is stateless → nothing to invalidate server-side
     // Client should delete token (localStorage / cookie)
     blacklistToken(req.token);
+
+    if (req.body.refreshToken) {
+      await revokeRefreshToken(req.body.refreshToken);
+    }
 
     return res.status(StatusCodes.OK).json({
       message: "user logged out",
@@ -159,9 +235,26 @@ async function logout(req, res) {
   }
 }
 
+// logout from all devices
+async function logoutAll(req, res) {
+  try {
+    blacklistToken(req.token);
+    await revokeAllUserRefreshTokens(req.user.user_id);
+
+    return res.json({
+      message: "Logged out from all devices",
+    });
+  } catch (err) {
+    console.error("LOGOUT ALL ERROR", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
 module.exports = {
   register,
-  login,
-  logout,
   registerAdmin,
+  login,
+  refresh,
+  logout,
+  logoutAll,
 };

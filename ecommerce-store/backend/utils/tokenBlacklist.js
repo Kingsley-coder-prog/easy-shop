@@ -15,7 +15,7 @@
 
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
 
-const RANGE = "blacklisted_tokens!A2:C";
+const RANGE = "BlacklistedTokens!A2:C";
 
 async function blacklistToken(token, expiresAt) {
   const sheets = await getSheets();
