@@ -1,6 +1,7 @@
 // middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 const { findUserById } = require("../models/usersSheet");
+const { isTokenBlacklisted } = require("../utils/tokenBlacklist");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
 
@@ -10,14 +11,14 @@ async function auth(req, res, next) {
     if (!header)
       return res.status(401).json({ error: "Missing Authorization header" });
     const token = header.split(" ")[1];
-    if (!token)
-      return res.status(401).json({ error: "Malformed Authorization header" });
+    if (isTokenBlacklisted(token))
+      return res.status(401).json({ msg: "Authentication invalid" });
 
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
-      return res.status(401).json({ error: "Invalid or expired token" });
+      return res.status(401).json({ error: "Authentication invalid" });
     }
 
     // optionally verify user still exists
@@ -26,6 +27,7 @@ async function auth(req, res, next) {
 
     // attach to req
     req.user = { user_id: user.user_id, role: user.role };
+    req.token = token;
     next();
   } catch (err) {
     console.error("AUTH MIDDLEWARE ERROR", err);

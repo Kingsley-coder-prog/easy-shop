@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
+const bcrypt = require("bcryptjs");
 const {
   getUsers,
   updateUser,
@@ -91,9 +92,51 @@ async function adminDeleteUser(req, res) {
   }
 }
 
+async function updateUserPassword(req, res) {
+  try {
+    const user_id = req.user.user_id;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        error: "Old password and new password are required",
+      });
+    }
+
+    const user = await findUserById(user_id);
+    if (!user) {
+      throw new CustomError.NotFoundError("User not found");
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password_hash);
+
+    if (!isMatch) {
+      throw new CustomError.BadRequestError("Old password is incorrect");
+    }
+
+    const result = await updateUser(
+      user_id,
+      { password: newPassword },
+      { allowRoleChange: false }
+    );
+
+    if (result.status && result.status !== 200) {
+      return res.status(result.status).json({ error: result.error });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    console.error("UPDATE PASSWORD ERROR", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
 module.exports = {
   getCurrentUser,
   listUsers,
   adminUpdateUser,
   adminDeleteUser,
+  updateUserPassword,
 };
