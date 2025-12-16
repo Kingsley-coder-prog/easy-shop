@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const { blacklistToken } = require("../utils/tokenBlacklist");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
-const JWT_EXPIRES_IN = process.env.JWT_LIFETIME;
+const JWT_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN;
 
 // register
 async function register(req, res) {

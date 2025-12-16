@@ -11,7 +11,7 @@ async function auth(req, res, next) {
     if (!header)
       return res.status(401).json({ error: "Missing Authorization header" });
     const token = header.split(" ")[1];
-    if (isTokenBlacklisted(token))
+    if (await isTokenBlacklisted(token))
       return res.status(401).json({ msg: "Authentication invalid" });
 
     let decoded;
