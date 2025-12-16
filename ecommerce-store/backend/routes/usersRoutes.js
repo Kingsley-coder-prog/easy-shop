@@ -1,11 +1,7 @@
 // routes/usersRoutes.js
 const express = require("express");
 const router = express.Router();
-const {
-  register,
-  registerAdmin,
-  login,
-} = require("../controllers/authController");
+
 const { auth, adminOnly } = require("../middlewares/authMiddleware");
 const {
   getCurrentUser,
@@ -14,17 +10,12 @@ const {
   adminDeleteUser,
 } = require("../controllers/userController");
 
-// Public
-router.route("/register").post(register);
-router.route("/login").post(login);
-router.route("/register-admin").post(auth, adminOnly, registerAdmin);
-
 // Protected
-router.get("/getCurrentUser", auth, getCurrentUser);
+router.route("/getCurrentUser").get(auth, getCurrentUser);
 
 // Admin routes
-router.get("/", auth, adminOnly, listUsers);
-router.put("/:id", auth, adminOnly, adminUpdateUser);
-router.delete("/:id", auth, adminOnly, adminDeleteUser);
+router.route("/").get(auth, adminOnly, listUsers);
+router.route("/:id").put(auth, adminOnly, adminUpdateUser);
+router.route("/:id").delete(auth, adminOnly, adminDeleteUser);
 
 module.exports = router;

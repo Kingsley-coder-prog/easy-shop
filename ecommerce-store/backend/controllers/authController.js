@@ -132,8 +132,8 @@ async function login(req, res) {
       role: user.role,
       created_at: user.created_at,
     };
-    console.log("Login attempt email:", email);
-    console.log("Found user:", user);
+    // console.log("Login attempt email:", email);
+    // console.log("Found user:", user);
 
     return res
       .status(StatusCodes.OK)
@@ -144,8 +144,24 @@ async function login(req, res) {
   }
 }
 
+// logout
+async function logout(req, res) {
+  try {
+    // JWT is stateless → nothing to invalidate server-side
+    // Client should delete token (localStorage / cookie)
+
+    return res.status(StatusCodes.OK).json({
+      message: "user logged out",
+    });
+  } catch (err) {
+    console.error("LOGOUT ERROR", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}
+
 module.exports = {
   register,
   login,
+  logout,
   registerAdmin,
 };
