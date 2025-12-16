@@ -8,6 +8,7 @@ const {
   createUser,
 } = require("../models/usersSheet");
 const jwt = require("jsonwebtoken");
+const { blacklistToken } = require("../utils/tokenBlacklist");
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
 const JWT_EXPIRES_IN = process.env.JWT_LIFETIME;
@@ -132,8 +133,6 @@ async function login(req, res) {
       role: user.role,
       created_at: user.created_at,
     };
-    // console.log("Login attempt email:", email);
-    // console.log("Found user:", user);
 
     return res
       .status(StatusCodes.OK)
@@ -149,6 +148,7 @@ async function logout(req, res) {
   try {
     // JWT is stateless → nothing to invalidate server-side
     // Client should delete token (localStorage / cookie)
+    blacklistToken(req.token);
 
     return res.status(StatusCodes.OK).json({
       message: "user logged out",
