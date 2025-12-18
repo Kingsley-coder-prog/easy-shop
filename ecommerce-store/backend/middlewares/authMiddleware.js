@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { findUserById } = require("../models/usersSheet");
 const { isTokenBlacklisted } = require("../utils/tokenBlacklist");
 
-const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 async function auth(req, res, next) {
   try {
@@ -28,6 +28,7 @@ async function auth(req, res, next) {
     // attach to req
     req.user = { user_id: user.user_id, role: user.role };
     req.token = token;
+
     next();
   } catch (err) {
     console.error("AUTH MIDDLEWARE ERROR", err);

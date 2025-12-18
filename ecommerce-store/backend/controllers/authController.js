@@ -45,9 +45,13 @@ async function register(req, res) {
       { expiresIn: ACCESS_EXPIRES_IN }
     );
 
-    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
-      expiresIn: REFRESH_EXPIRES_IN,
-    });
+    const refreshToken = jwt.sign(
+      { user_id: user.user_id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: REFRESH_EXPIRES_IN,
+      }
+    );
 
     await createRefreshToken(
       user.user_id,
@@ -107,9 +111,13 @@ async function registerAdmin(req, res) {
       { expiresIn: ACCESS_EXPIRES_IN }
     );
 
-    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
-      expiresIn: REFRESH_EXPIRES_IN,
-    });
+    const refreshToken = jwt.sign(
+      { user_id: user.user_id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: REFRESH_EXPIRES_IN,
+      }
+    );
 
     await createRefreshToken(
       user.user_id,
@@ -157,9 +165,13 @@ async function login(req, res) {
       { expiresIn: ACCESS_EXPIRES_IN }
     );
 
-    const refreshToken = jwt.sign({ user_id: user.user_id }, JWT_SECRET, {
-      expiresIn: REFRESH_EXPIRES_IN,
-    });
+    const refreshToken = jwt.sign(
+      { user_id: user.user_id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: REFRESH_EXPIRES_IN,
+      }
+    );
 
     await createRefreshToken(
       user.user_id,
