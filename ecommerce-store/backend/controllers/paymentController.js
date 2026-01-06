@@ -1,16 +1,36 @@
 const { StatusCodes } = require("http-status-codes");
 const { initializePayment, verifyPayment } = require("../services/paystack");
-const { getOrders, updateOrder } = require("../models/ordersSheet");
+const {
+  getOrdersService,
+  updateOrderService,
+} = require("../models/ordersSheet");
 
 async function createPayment(req, res) {
   try {
     const { order_id } = req.body;
-    const orders = await getOrders();
+
+    if (!order_id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "order_id is required" });
+    }
+
+    // ✅ USE SERVICE (not controller)
+    const { orders } = await getOrdersService();
+
     const order = orders.find((o) => o.order_id === order_id);
-    if (!order)
+
+    if (!order) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
+    }
+
+    if (order.status !== "Pending") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Only pending orders can be paid for",
+      });
+    }
 
     const amount_kobo = Number(order.amount_naira) * 100;
 
@@ -20,13 +40,17 @@ async function createPayment(req, res) {
       order_id
     );
 
-    const auth_url = paystackRes.data.authorization_url;
-    const reference = paystackRes.data.reference;
+    const { authorization_url, reference } = paystackRes.data;
 
-    // Save reference in your order record
-    await updateOrder(order_id, { stripe_session_id: reference });
+    // ✅ Save Paystack reference on order
+    await updateOrderService(order_id, {
+      stripe_session_id: reference,
+    });
 
-    return res.status(StatusCodes.OK).json({ auth_url, reference });
+    return res.status(StatusCodes.OK).json({
+      authorization_url,
+      reference,
+    });
   } catch (err) {
     console.error("PAYMENT INIT ERROR", err);
     return res.status(500).json({ error: "Server error" });
@@ -36,23 +60,35 @@ async function createPayment(req, res) {
 async function verifyPaymentCallback(req, res) {
   try {
     const { reference } = req.body;
-    const verifyRes = await verifyPayment(reference);
 
-    if (verifyRes.data.status === "success") {
-      const order_id = verifyRes.data.metadata.order_id;
-
-      await updateOrder(order_id, { status: "ready" });
-
-      return res.status(StatusCodes.OK).json({ message: "Payment successful" });
+    if (!reference) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "reference is required" });
     }
 
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: "Payment failed" });
+    const verifyRes = await verifyPayment(reference);
+
+    if (verifyRes.data.status !== "success") {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Payment failed" });
+    }
+
+    const order_id = verifyRes.data.metadata.order_id;
+
+    await updateOrderService(order_id, {
+      status: "Paid",
+    });
+
+    return res.status(StatusCodes.OK).json({ message: "Payment successful" });
   } catch (err) {
     console.error("PAYSTACK VERIFY ERROR", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
 
-module.exports = { createPayment, verifyPaymentCallback };
+module.exports = {
+  createPayment,
+  verifyPaymentCallback,
+};

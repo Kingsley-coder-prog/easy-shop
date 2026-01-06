@@ -1,11 +1,10 @@
 const express = require("express");
-const { auth } = require("../middlewares/authMiddleware");
+const router = express.Router();
 const {
   createPayment,
   verifyPaymentCallback,
 } = require("../controllers/paymentController");
-
-const router = express.Router();
+const { auth } = require("../middlewares/authMiddleware");
 
 // Initialize payment
 router.post("/create", auth, createPayment);
