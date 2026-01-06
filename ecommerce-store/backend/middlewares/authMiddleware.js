@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { findUserById } = require("../models/usersSheet");
 const { isTokenBlacklisted } = require("../utils/tokenBlacklist");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret";
 
 async function auth(req, res, next) {
   try {
