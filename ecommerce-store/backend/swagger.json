@@ -18,8 +18,18 @@
       "description": "Development Server"
     },
     {
-      "url": "https://api.shopeasy.com/api/v1",
-      "description": "Production Server"
+      "url": "{protocol}://{host}/api/v1",
+      "description": "Production Server (Render)",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": ["https", "http"]
+        },
+        "host": {
+          "default": "shopeasy-api.onrender.com",
+          "description": "API host"
+        }
+      }
     }
   ],
   "components": {
