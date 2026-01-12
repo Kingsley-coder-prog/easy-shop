@@ -193,23 +193,30 @@
       "post": {
         "tags": ["Authentication"],
         "summary": "Register a new user",
-        "description": "Create a new user account with email and password",
+        "description": "Create a new user account with name, email and password. First registered user becomes admin",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": ["name", "email", "password"],
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Full name of the user",
+                    "example": "John Doe"
+                  },
                   "email": {
                     "type": "string",
                     "format": "email",
+                    "description": "Email address",
                     "example": "user@example.com"
                   },
                   "password": {
                     "type": "string",
                     "format": "password",
+                    "description": "Password (minimum 8 characters)",
                     "example": "securePassword123"
                   }
                 }
@@ -225,13 +232,36 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "user_id": {
+                    "message": {
+                      "type": "string",
+                      "example": "User registered"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": ["user", "admin"]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "accessToken": {
                       "type": "string"
                     },
-                    "email": {
-                      "type": "string"
-                    },
-                    "token": {
+                    "refreshToken": {
                       "type": "string"
                     }
                   }
