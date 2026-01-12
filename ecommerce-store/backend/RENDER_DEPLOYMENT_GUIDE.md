@@ -75,7 +75,7 @@ NODE_ENV=production
 1. Click **"Create Web Service"**
 2. Render will automatically build and deploy
 3. Wait for deployment to complete (2-5 minutes)
-4. Your API URL will be: `https://shopeasy-api.onrender.com`
+4. Your API URL will be: `https://easy-shop-yvwm.onrender.com`
 
 ---
 
@@ -84,7 +84,7 @@ NODE_ENV=production
 ### 4.1 Swagger UI URL
 Once deployed, access Swagger documentation at:
 ```
-https://shopeasy-api.onrender.com/api-docs
+https://easy-shop-yvwm.onrender.com/api-docs
 ```
 
 ### 4.2 Test API Endpoints
@@ -107,7 +107,7 @@ For protected endpoints:
 
 ### 5.1 Health Check
 ```bash
-curl https://shopeasy-api.onrender.com/api/v1/products
+curl https://easy-shop-yvwm.onrender.com/api/v1/products
 ```
 
 ### 5.2 Check Logs
@@ -213,22 +213,22 @@ If you want manual deploys:
 - **Swagger Docs:** `http://localhost:5000/api-docs` (local)
 
 ### Production URLs (After Render Deployment)
-- **API Base:** `https://shopeasy-api.onrender.com/api/v1`
-- **Swagger Docs:** `https://shopeasy-api.onrender.com/api-docs`
+- **API Base:** `https://easy-shop-yvwm.onrender.com/api/v1`
+- **Swagger Docs:** `https://easy-shop-yvwm.onrender.com/api-docs`
 
 ### Example Requests
 
 ```bash
 # Get all products
-curl https://shopeasy-api.onrender.com/api/v1/products
+curl https://easy-shop-yvwm.onrender.com/api/v1/products
 
 # Register user
-curl -X POST https://shopeasy-api.onrender.com/api/v1/auth/register \
+curl -X POST https://easy-shop-yvwm.onrender.com/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"password123"}'
 
 # Access Swagger UI
-https://shopeasy-api.onrender.com/api-docs
+https://easy-shop-yvwm.onrender.com/api-docs
 ```
 
 ---

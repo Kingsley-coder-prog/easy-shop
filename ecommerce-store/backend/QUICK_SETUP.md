@@ -69,8 +69,8 @@ npm run dev
 
 ### After Render Deployment
 ```
-API: https://shopeasy-api.onrender.com/api/v1
-Swagger: https://shopeasy-api.onrender.com/api-docs
+API: https://easy-shop-yvwm.onrender.com/api/v1
+Swagger: https://easy-shop-yvwm.onrender.com/api-docs
 ```
 
 ---
@@ -78,7 +78,7 @@ Swagger: https://shopeasy-api.onrender.com/api-docs
 ## How to Use Swagger
 
 ### View Documentation
-1. Open `https://shopeasy-api.onrender.com/api-docs`
+1. Open `https://easy-shop-yvwm.onrender.com/api-docs`
 2. See all endpoints organized by category
 3. Click any endpoint to expand details
 
@@ -117,7 +117,7 @@ Swagger: https://shopeasy-api.onrender.com/api-docs
 ## Common Tasks
 
 ### Change API Server in Swagger
-1. Open `https://shopeasy-api.onrender.com/api-docs`
+1. Open `https://easy-shop-yvwm.onrender.com/api-docs`
 2. Look for dropdown at top-right showing server
 3. Select between local or production
 
@@ -169,7 +169,7 @@ Use Paystack test keys initially:
 3. Update frontend API base URL:
    ```javascript
    // Change from localhost
-   const API_URL = 'https://shopeasy-api.onrender.com/api/v1'
+   const API_URL = 'https://easy-shop-yvwm.onrender.com/api/v1'
    ```
 4. Test full flow (register → login → browse products → order → pay)
 5. Monitor Render logs
