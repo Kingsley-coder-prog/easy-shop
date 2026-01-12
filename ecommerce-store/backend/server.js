@@ -20,6 +20,16 @@ app.use(express.json());
 // Swagger API Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({
+    message: "ShopEasy API - E-commerce Backend",
+    version: "1.0.0",
+    docs: "/api-docs",
+    baseUrl: "/api/v1",
+  });
+});
+
 app.use("/api/v1/webhooks", webhookRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/products", productRouter);
