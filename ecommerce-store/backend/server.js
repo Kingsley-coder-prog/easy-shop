@@ -12,7 +12,7 @@ const paymentsRouter = require("./routes/payments");
 const webhookRouter = require("./routes/webhookRoutes");
 
 app.use(cors());
-app.use("/webhooks/paystack", express.raw({ type: "application/json" }));
+app.use("/api/v1/webhooks/paystack", express.raw({ type: "application/json" }));
 app.use(express.json());
 
 app.use("/api/v1/webhooks", webhookRouter);

@@ -8,17 +8,24 @@ const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
 async function paystackWebhook(req, res) {
   try {
-    // 1️⃣ Verify Paystack signature
+    console.log("🔥 PAYSTACK WEBHOOK RECEIVED");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body.toString());
+    // 1️⃣ Verify Paystack signature using RAW body
     const hash = crypto
       .createHmac("sha512", PAYSTACK_SECRET)
-      .update(JSON.stringify(req.body))
+      .update(req.body)
       .digest("hex");
 
     if (hash !== req.headers["x-paystack-signature"]) {
-      return res.status(401).send("Invalid signature");
+      console.error("Invalid Paystack signature");
+      return res.sendStatus(401);
     }
 
-    const event = req.body;
+    // 2️⃣ Parse body AFTER signature verification
+    const event = JSON.parse(req.body.toString());
+
+    console.log("EVENT:", event.event);
 
     // 2️⃣ Only handle successful charge
     if (event.event !== "charge.success") {
