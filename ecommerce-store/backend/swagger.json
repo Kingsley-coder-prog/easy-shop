@@ -26,7 +26,7 @@
           "enum": ["https", "http"]
         },
         "host": {
-          "default": "shopeasy-api.onrender.com",
+          "default": "easy-shop-yvwm.onrender.com",
           "description": "API host"
         }
       }
