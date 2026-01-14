@@ -1,0 +1,60 @@
+<template>
+  <div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded shadow w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+
+      <form @submit.prevent="handleLogin" class="space-y-4">
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          class="w-full border p-2 rounded"
+        />
+
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          class="w-full border p-2 rounded"
+        />
+
+        <button
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </form>
+
+      <p class="text-sm text-center mt-4">
+        No account?
+        <router-link to="/register" class="text-blue-600">
+          Register
+        </router-link>
+      </p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth.store";
+import { useRouter } from "vue-router";
+
+const email = ref("");
+const password = ref("");
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogin = async () => {
+  try {
+    await authStore.login({
+      email: email.value,
+      password: password.value,
+    });
+    router.push("/products");
+  } catch (err) {
+    alert("Login failed");
+  }
+};
+</script>
