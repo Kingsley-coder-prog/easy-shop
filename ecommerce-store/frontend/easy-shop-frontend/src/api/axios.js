@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // e.g. https://easy-shop.onrender.com/api/v1
+  baseURL: import.meta.env.EASYSHOP_BASE_URL, // e.g. https://easy-shop.onrender.com/api/v1
   headers: {
     "Content-Type": "application/json",
   },

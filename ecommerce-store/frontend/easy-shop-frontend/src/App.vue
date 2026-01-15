@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Welcome to Easy Shop</h1>
+    <!-- <h1>Welcome to Easy Shop</h1> -->
     <RouterView />
   </div>
 </template>
