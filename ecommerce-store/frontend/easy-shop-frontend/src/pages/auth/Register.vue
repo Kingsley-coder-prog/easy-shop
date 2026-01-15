@@ -25,11 +25,17 @@
       />
 
       <button
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        type="submit"
+        :disabled="loading"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
       >
-        Register
+        {{ loading ? "Registering..." : "Register" }}
       </button>
     </form>
+
+    <p v-if="error" class="text-red-500 text-sm text-center mt-2">
+      {{ error }}
+    </p>
 
     <p class="text-sm text-center mt-4">
       Already have an account?
@@ -52,11 +58,32 @@ const formData = ref({
   password: "",
 });
 
+const loading = ref(false);
+const error = ref("");
+
 async function register() {
-  await authStore.register(formData.value);
-  router.push("/login");
+  error.value = "";
+
+  try {
+    console.log("API URL:", import.meta.env.VITE_EASYSHOP_BASE_URL);
+    console.log("Payload:", formData.value);
+    loading.value = true;
+    await authStore.register(formData.value);
+
+    alert("Registration successful. Please login.");
+    router.push("/login");
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    error.value =
+      err.response?.data?.error ||
+      err.response?.data?.msg ||
+      "Registration failed";
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
 <style>
 </style>
+

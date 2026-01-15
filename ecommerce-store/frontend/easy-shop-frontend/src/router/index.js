@@ -6,8 +6,13 @@ import Register from "@/pages/auth/Register.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
-  { path: "/login", component: Login },
   { path: "/register", component: Register },
+  { path: "/login", component: Login },
+  // {
+  //   path: "/admin",
+  //   component: AdminDashboard,
+  //   meta: { requiresAdmin: true },
+  // },
 ];
 
 const router = createRouter({
@@ -15,18 +20,45 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
-  if (
-    !authStore.isAuthenticated &&
-    to.path !== "/login" &&
-    to.path !== "/register"
-  ) {
-    next("/login");
-  } else {
-    next();
+  /**
+   * 1️⃣ Public routes
+   */
+  if (to.path === "/login" || to.path === "/register") {
+    return next();
   }
+
+  /**
+   * 2️⃣ Restore user on refresh if token exists
+   */
+  if (authStore.accessToken && !authStore.user) {
+    try {
+      await authStore.fetchCurrentUser();
+    } catch {
+      return next("/login");
+    }
+  }
+
+  /**
+   * 3️⃣ Requires authentication
+   */
+  if (!authStore.isAuthenticated) {
+    return next("/login");
+  }
+
+  /**
+   * 4️⃣ Requires admin role
+   */
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    return next("/products");
+  }
+
+  /**
+   * 5️⃣ Allow navigation
+   */
+  next();
 });
 
 export default router;

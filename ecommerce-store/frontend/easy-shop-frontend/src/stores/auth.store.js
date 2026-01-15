@@ -29,6 +29,16 @@ export const useAuthStore = defineStore("auth", {
       localStorage.setItem("accessToken", res.data.accessToken);
     },
 
+    async fetchCurrentUser() {
+      try {
+        const res = await api.get("/users/getCurrentUser");
+        this.user = res.data.user;
+      } catch (err) {
+        // Token might be invalid or expired
+        this.logout();
+      }
+    },
+
     logout() {
       this.user = null;
       this.accessToken = null;
