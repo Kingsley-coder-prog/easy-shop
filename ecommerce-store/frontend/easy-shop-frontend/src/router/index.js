@@ -3,6 +3,7 @@ import { useAuthStore } from "@/stores/auth.store";
 
 import Login from "@/pages/auth/Login.vue";
 import Register from "@/pages/auth/Register.vue";
+import Products from "@/pages/products/Products.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -13,6 +14,10 @@ const routes = [
   //   component: AdminDashboard,
   //   meta: { requiresAdmin: true },
   // },
+  {
+    path: "/products",
+    component: Products,
+  },
 ];
 
 const router = createRouter({
