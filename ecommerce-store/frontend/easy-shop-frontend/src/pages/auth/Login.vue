@@ -19,11 +19,16 @@
         />
 
         <button
+          type="submit"
+          :disabled="loading"
           class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          Login
+          L{{ loading ? "Login in progress..." : "Login" }}
         </button>
       </form>
+      <p v-if="error" class="text-red-500 text-sm text-center mt-2">
+        {{ error }}
+      </p>
 
       <p class="text-sm text-center mt-4">
         No account?
@@ -46,15 +51,24 @@ const password = ref("");
 const authStore = useAuthStore();
 const router = useRouter();
 
+const loading = ref(false);
+const error = ref("");
+
 const handleLogin = async () => {
+  error.value = "";
   try {
     await authStore.login({
       email: email.value,
       password: password.value,
     });
+    alert("Login successful.");
     router.push("/products");
   } catch (err) {
-    alert("Login failed");
+    console.error("LOGIN ERROR:", err);
+    error.value =
+      err.response?.data?.error || err.response?.data?.msg || "Login failed";
+  } finally {
+    loading.value = false;
   }
 };
 </script>
