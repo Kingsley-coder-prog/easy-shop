@@ -52,8 +52,8 @@
               </span>
 
               <button
+                @click="addToCart(product)"
                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                disabled
               >
                 Add to Cart
               </button>
@@ -68,12 +68,21 @@
 <script setup>
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useProductsStore } from "@/stores/product.store";
+import { useProductsStore } from "@/stores/products.store";
+import { useCartStore } from "@/stores/cart.store";
 
 const productsStore = useProductsStore();
+const cartStore = useCartStore();
 const { products, loading, error } = storeToRefs(productsStore);
 
 onMounted(() => {
   productsStore.fetchProducts();
 });
+
+function addToCart(product) {
+  cartStore.addItem(product);
+}
 </script>
+
+
+
