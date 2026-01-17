@@ -10,6 +10,7 @@ async function initializePayment(email, amount_kobo, order_id) {
     {
       email,
       amount: amount_kobo,
+      callback_url: `${process.env.FRONTEND_URL}/order-success`,
       metadata: { order_id },
     },
     {
