@@ -4,6 +4,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import Login from "@/pages/auth/Login.vue";
 import Register from "@/pages/auth/Register.vue";
 import Products from "@/pages/products/Products.vue";
+import Checkout from "@/pages/checkout/Checkout.vue";
+import OrderConfirmation from "@/pages/orders/OrderConfirmation.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -17,6 +19,16 @@ const routes = [
   {
     path: "/products",
     component: Products,
+  },
+  {
+    path: "/checkout",
+    component: Checkout,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/order-success",
+    component: OrderConfirmation,
+    meta: { requiresAuth: true },
   },
 ];
 

@@ -8,7 +8,7 @@
 
 <script setup>
 import { RouterView } from "vue-router";
-import { CartDrawer } from "@/components/cart/CartDrawer.vue";
+import CartDrawer from "@/components/cart/CartDrawer.vue";
 </script>
 
 <style>

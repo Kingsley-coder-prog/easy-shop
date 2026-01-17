@@ -64,5 +64,8 @@ export const useCartStore = defineStore("cart", {
       this.items = [];
       this.close();
     },
+    // clearCart() {
+    //   this.items = [];
+    // },
   },
 });

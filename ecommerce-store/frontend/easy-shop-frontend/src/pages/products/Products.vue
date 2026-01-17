@@ -68,7 +68,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useProductsStore } from "@/stores/products.store";
+import { useProductsStore } from "@/stores/product.store";
 import { useCartStore } from "@/stores/cart.store";
 
 const productsStore = useProductsStore();
