@@ -6,6 +6,10 @@ import Register from "@/pages/auth/Register.vue";
 import Products from "@/pages/products/Products.vue";
 import Checkout from "@/pages/checkout/Checkout.vue";
 import OrderConfirmation from "@/pages/orders/OrderConfirmation.vue";
+import AdminLayout from "@/layouts/AdminLayout.vue";
+import AdminProducts from "@/pages/admin/Products.vue";
+import AdminOrders from "@/pages/admin/Orders.vue";
+import AdminUsers from "@/pages/admin/Users.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -29,6 +33,16 @@ const routes = [
     path: "/order-success",
     component: OrderConfirmation,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/admin",
+    component: AdminLayout,
+    meta: { requiresAdmin: true },
+    children: [
+      { path: "products", component: AdminProducts },
+      { path: "orders", component: AdminOrders },
+      { path: "users", component: AdminUsers },
+    ],
   },
 ];
 
