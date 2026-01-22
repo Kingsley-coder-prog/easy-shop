@@ -75,11 +75,28 @@ const productsStore = useProductStore();
 const cartStore = useCartStore();
 const { products, loading, error } = storeToRefs(productsStore);
 
-onMounted(() => {
-  productsStore.fetchProducts();
+// Add debugging
+const debugInfo = ref(null);
+
+onMounted(async () => {
+  console.log("🚀 Fetching products...");
+
+  try {
+    await productsStore.fetchProducts();
+    console.log("✅ Products fetched:", products.value);
+    console.log("✅ Products length:", products.value?.length);
+    console.log("✅ Loading state:", loading.value);
+    console.log("✅ Error state:", error.value);
+
+    // Check store structure
+    console.log("🛒 Store structure:", productsStore);
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+  }
 });
 
 function addToCart(product) {
+  console.log("➕ Adding to cart:", product);
   cartStore.addItem(product);
 }
 </script>

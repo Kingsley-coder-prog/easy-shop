@@ -27,7 +27,7 @@
       <button
         type="submit"
         :disabled="loading"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
       >
         {{ loading ? "Registering..." : "Register" }}
       </button>

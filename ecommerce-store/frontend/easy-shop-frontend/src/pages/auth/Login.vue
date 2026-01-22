@@ -21,7 +21,7 @@
         <button
           type="submit"
           :disabled="loading"
-          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
         >
           {{ loading ? "Login..." : "Login" }}
         </button>
