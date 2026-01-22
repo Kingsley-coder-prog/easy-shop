@@ -23,7 +23,7 @@
           :disabled="loading"
           class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          L{{ loading ? "Login in progress..." : "Login" }}
+          {{ loading ? "Login..." : "Login" }}
         </button>
       </form>
       <p v-if="error" class="text-red-500 text-sm text-center mt-2">
@@ -45,11 +45,11 @@ import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "vue-router";
 
-const email = ref("");
-const password = ref("");
-
 const authStore = useAuthStore();
 const router = useRouter();
+
+const email = ref("");
+const password = ref("");
 
 const loading = ref(false);
 const error = ref("");
