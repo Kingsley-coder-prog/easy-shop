@@ -27,8 +27,8 @@
 // });
 
 import { defineStore } from "pinia";
-// import { productService } from "@/api/products.api";
-import api from "@/api/axios";
+import { productService } from "@/api/products.api";
+// import api from "@/api/axios";
 
 export const useProductStore = defineStore("products", {
   state: () => ({
@@ -42,14 +42,14 @@ export const useProductStore = defineStore("products", {
       this.loading = true;
       this.error = null;
       try {
-        // const res = await productService.getAll();
-        // this.products = res.data;
         console.log("📡 Making API request to /products...");
-        const response = await api.get("/products");
+        // const response = await api.get("/products");
+        const response = await productService.getAll();
         console.log("📦 API Response:", response);
 
-        this.products = response.data;
+        this.products = response.data.products;
         console.log("✅ Products set:", this.products);
+        console.log("✅ Products count:", this.products.length);
       } catch (err) {
         console.error(err);
         this.error = "Failed to load products";

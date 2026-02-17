@@ -53,7 +53,7 @@
 
               <button
                 @click="addToCart(product)"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
               >
                 Add to Cart
               </button>
@@ -76,7 +76,7 @@ const cartStore = useCartStore();
 const { products, loading, error } = storeToRefs(productsStore);
 
 // Add debugging
-const debugInfo = ref(null);
+// const debugInfo = ref(null);
 
 onMounted(async () => {
   console.log("🚀 Fetching products...");
