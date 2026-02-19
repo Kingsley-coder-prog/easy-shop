@@ -3,9 +3,9 @@
     <RouterLink to="/products" class="font-bold text-xl"> EasyShop </RouterLink>
 
     <div class="flex items-center gap-4">
-      <!-- Normal users -->
-      <RouterLink to="/products">Products</RouterLink>
-      <RouterLink to="/cart">Cart</RouterLink>
+      <!-- Normal users - hide on login/register pages -->
+      <RouterLink v-if="!isAuthPage" to="/products">Products</RouterLink>
+      <RouterLink v-if="!isAuthPage" to="/cart">Cart</RouterLink>
 
       <!-- 🔐 ADMIN ONLY -->
       <RouterLink
@@ -29,9 +29,16 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 
 const authStore = useAuthStore();
+const route = useRoute();
+
+const isAuthPage = computed(() => {
+  return route.path === "/login" || route.path === "/register";
+});
 
 const logout = () => {
   authStore.logout();

@@ -43,6 +43,8 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
       this.accessToken = null;
       localStorage.removeItem("accessToken");
+      // Redirect to login page
+      window.location.href = "/login";
     },
   },
 });

@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import Login from "@/pages/auth/Login.vue";
 import Register from "@/pages/auth/Register.vue";
 import Products from "@/pages/products/Products.vue";
+import Cart from "@/pages/cart/Cart.vue";
 import Checkout from "@/pages/checkout/Checkout.vue";
 import OrderConfirmation from "@/pages/orders/OrderConfirmation.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
@@ -23,6 +24,11 @@ const routes = [
   {
     path: "/products",
     component: Products,
+  },
+  {
+    path: "/cart",
+    component: Cart,
+    meta: { requiresAuth: true },
   },
   {
     path: "/checkout",

@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useProductStore } from "@/stores/product.store";
 
 import ProductTable from "@/components/admin/ProductTable.vue";
@@ -65,9 +65,19 @@ const saveProduct = async (data) => {
   closeModal();
 };
 
-const deleteProduct = async (id) => {
+const deleteProduct = async (product) => {
+  const id = product.product_id || product._id || product.id;
+  if (!id) return alert("Unable to determine product id");
   if (confirm("Delete this product?")) {
-    await store.deleteProduct(id);
+    try {
+      await store.deleteProduct(id);
+      // refresh products
+      await store.fetchProducts();
+      alert("Product deleted");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete product");
+    }
   }
 };
 

@@ -10,13 +10,13 @@
     </thead>
 
     <tbody>
-      <tr v-for="p in products" :key="p._id" class="border-t">
+      <tr v-for="p in products" :key="p._id || p.product_id" class="border-t">
         <td class="p-3">{{ p.name }}</td>
         <td class="p-3">₦{{ p.price }}</td>
-        <td class="p-3">{{ p.stock }}</td>
+        <td class="p-3">{{ p.stock || "—" }}</td>
         <td class="p-3 text-right space-x-2">
           <button @click="$emit('edit', p)" class="text-blue-600">Edit</button>
-          <button @click="$emit('delete', p._id)" class="text-red-600">
+          <button @click="$emit('delete', p)" class="text-red-600">
             Delete
           </button>
         </td>

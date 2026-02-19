@@ -6,6 +6,7 @@ const {
   updateProductService,
   deleteProductService,
 } = require("../models/productsSheet");
+const { getPresignedUploadUrl } = require("../services/s3");
 
 const createProduct = async (req, res) => {
   try {
@@ -51,10 +52,44 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getUploadUrl = async (req, res) => {
+  try {
+    const { fileName, mimeType } = req.body;
+
+    if (!fileName || !mimeType) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "fileName and mimeType are required",
+      });
+    }
+
+    // Validate file type (only allow images)
+    const allowedMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    if (!allowedMimeTypes.includes(mimeType)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Only image files (JPEG, PNG, GIF, WebP) are allowed",
+      });
+    }
+
+    const uploadData = await getPresignedUploadUrl(fileName, mimeType);
+    return res.status(StatusCodes.OK).json(uploadData);
+  } catch (error) {
+    console.error("Upload URL Error:", error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Failed to generate upload URL" });
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
   getProductByCategory,
   updateProduct,
   deleteProduct,
+  getUploadUrl,
 };

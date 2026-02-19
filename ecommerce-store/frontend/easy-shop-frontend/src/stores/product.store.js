@@ -47,7 +47,23 @@ export const useProductStore = defineStore("products", {
         const response = await productService.getAll();
         console.log("📦 API Response:", response);
 
-        this.products = response.data.products;
+        // Normalize backend product shape to UI-friendly shape
+        const raw = response.data.products || response.data || [];
+        this.products = raw.map((p) => ({
+          // keep both ids but expose `_id` for UI compatibility
+          _id: p.product_id || p._id || p.id,
+          product_id: p.product_id || p._id || p.id,
+          name: p.name || p.product_name || "",
+          description: p.description || "",
+          price_naira: p.price_naira || p.price || 0,
+          price: p.price_naira || p.price || 0,
+          category: p.category || "",
+          image: p.image || "",
+          created_at: p.created_at || "",
+          // keep raw reference
+          __raw: p,
+        }));
+
         console.log("✅ Products set:", this.products);
         console.log("✅ Products count:", this.products.length);
       } catch (err) {
@@ -69,8 +85,15 @@ export const useProductStore = defineStore("products", {
     },
 
     async deleteProduct(id) {
-      await productService.remove(id);
-      this.products = this.products.filter((p) => p._id !== id);
+      try {
+        await productService.remove(id);
+        this.products = this.products.filter(
+          (p) => p._id !== id && p.product_id !== id,
+        );
+      } catch (err) {
+        console.error("Failed to delete product", err);
+        throw err;
+      }
     },
   },
 });

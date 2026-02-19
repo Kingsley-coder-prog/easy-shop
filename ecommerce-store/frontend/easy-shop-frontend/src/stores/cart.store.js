@@ -28,16 +28,23 @@ export const useCartStore = defineStore("cart", {
     },
 
     addItem(product) {
-      const existing = this.items.find((item) => item.id === product.id);
+      const existing = this.items.find(
+        (item) => item.id === product.id || item.id === product.product_id,
+      );
+
+      // Normalize product data
+      const normalizedProduct = {
+        id: product.product_id || product.id,
+        name: product.name,
+        price: product.price_naira || product.price || 0,
+        image: product.image,
+      };
 
       if (existing) {
         existing.quantity++;
       } else {
         this.items.push({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
+          ...normalizedProduct,
           quantity: 1,
         });
       }
