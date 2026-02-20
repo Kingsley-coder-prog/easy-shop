@@ -4,7 +4,7 @@ const {
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { v4: uuidv4 } = require("uuid");
+const { randomUUID } = require("crypto");
 
 // Configure AWS S3 Client
 const s3Client = new S3Client({
@@ -26,7 +26,7 @@ async function uploadImageToS3(fileBuffer, fileName, mimeType) {
   try {
     // Generate a unique key for the file
     const fileExtension = fileName.split(".").pop();
-    const uniqueFileName = `products/${uuidv4()}.${fileExtension}`;
+    const uniqueFileName = `products/${randomUUID()}.${fileExtension}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -79,7 +79,7 @@ async function deleteImageFromS3(imageUrl) {
 async function getPresignedUploadUrl(fileName, mimeType) {
   try {
     const fileExtension = fileName.split(".").pop();
-    const uniqueFileName = `products/${uuidv4()}.${fileExtension}`;
+    const uniqueFileName = `products/${randomUUID()}.${fileExtension}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
