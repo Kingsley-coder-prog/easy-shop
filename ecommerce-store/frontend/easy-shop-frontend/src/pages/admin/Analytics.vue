@@ -45,7 +45,7 @@
       <BaseCard>
         <div class="flex items-center gap-4">
           <div class="bg-yellow-100 p-3 rounded-lg">
-            <TrendingUpIcon class="w-6 h-6 text-yellow-600" />
+            <ChartBarIcon class="w-6 h-6 text-yellow-600" />
           </div>
           <div>
             <p class="text-sm text-gray-500">Avg Order Value</p>
@@ -61,7 +61,7 @@
       <BaseCard className="lg:col-span-1">
         <template #header>
           <div class="flex items-center gap-2">
-            <TrendingUpIcon class="w-5 h-5 text-blue-600" />
+            <ChartBarIcon class="w-5 h-5 text-blue-600" />
             <h3 class="text-lg font-semibold text-gray-900">Monthly Revenue</h3>
           </div>
         </template>
@@ -167,7 +167,7 @@ import {
   CurrencyDollarIcon,
   ShoppingCartIcon,
   UserGroupIcon,
-  TrendingUpIcon,
+  ChartBarIcon,
   ChartPieIcon,
   DocumentChartBarIcon,
 } from "@heroicons/vue/24/outline";

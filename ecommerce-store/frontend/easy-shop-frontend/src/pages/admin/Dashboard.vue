@@ -63,7 +63,7 @@
       <BaseCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <TrendingUpIcon class="w-5 h-5 text-blue-600" />
+            <ChartBarIcon class="w-5 h-5 text-blue-600" />
             <h3 class="text-lg font-semibold text-gray-900">
               Orders (Last 7 Days)
             </h3>
@@ -118,7 +118,7 @@
     <BaseCard>
       <template #header>
         <div class="flex items-center gap-2">
-          <DocumentTextIcon class="w-5 h-5 text-blue-600" />
+          <ClipboardDocumentListIcon class="w-5 h-5 text-blue-600" />
           <h3 class="text-lg font-semibold text-gray-900">Recent Orders</h3>
         </div>
       </template>
@@ -187,9 +187,9 @@ import {
   ShoppingBagIcon,
   ShoppingCartIcon,
   UserGroupIcon,
-  TrendingUpIcon,
+  ChartBarIcon,
   CurrencyDollarIcon,
-  DocumentTextIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/vue/24/outline";
 
 const productStore = useProductStore();
