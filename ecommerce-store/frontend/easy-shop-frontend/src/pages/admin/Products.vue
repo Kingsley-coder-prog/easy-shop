@@ -56,13 +56,26 @@ const closeModal = () => {
   showModal.value = false;
 };
 
+import { useToastStore } from "@/stores/toast.store";
+
+const toast = useToastStore();
+
 const saveProduct = async (data) => {
-  if (selectedProduct.value) {
-    await store.updateProduct(selectedProduct.value._id, data);
-  } else {
-    await store.createProduct(data);
+  try {
+    if (selectedProduct.value) {
+      await store.updateProduct(selectedProduct.value._id, data);
+      toast.success("Product updated");
+    } else {
+      await store.createProduct(data);
+      toast.success("Product created");
+    }
+    closeModal();
+  } catch (err) {
+    console.error("Save product failed:", err);
+    toast.error(
+      err.response?.data?.error || err.message || "Failed to save product"
+    );
   }
-  closeModal();
 };
 
 const deleteProduct = async (product) => {

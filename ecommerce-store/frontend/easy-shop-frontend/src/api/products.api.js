@@ -10,7 +10,8 @@ export const productService = {
   },
 
   update(id, data) {
-    return api.put(`/products/${id}`, data);
+    // Backend expects PATCH for updates
+    return api.patch(`/products/${id}`, data);
   },
 
   remove(id) {

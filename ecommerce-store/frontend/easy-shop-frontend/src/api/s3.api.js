@@ -15,7 +15,13 @@ export async function getPresignedUploadUrl(fileName, mimeType) {
     return response.data;
   } catch (error) {
     console.error("Error getting presigned URL:", error);
-    throw error;
+    // Surface backend message when available
+    const msg =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      "Failed to obtain upload URL";
+    throw new Error(msg);
   }
 }
 
@@ -36,7 +42,7 @@ export async function uploadToS3(presignedUrl, file) {
     });
   } catch (error) {
     console.error("Error uploading to S3:", error);
-    throw error;
+    throw new Error(error.message || "Failed to upload to S3");
   }
 }
 
@@ -60,6 +66,7 @@ export async function uploadImageFile(file) {
     return publicUrl;
   } catch (error) {
     console.error("Error in uploadImageFile:", error);
-    throw error;
+    // Re-throw with a clear message
+    throw new Error(error.message || "Image upload failed");
   }
 }

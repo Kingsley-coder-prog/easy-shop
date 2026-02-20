@@ -242,7 +242,9 @@ const uploadImage = async (file) => {
     console.log("✅ Image uploaded successfully:", imageUrl);
   } catch (error) {
     console.error("❌ Upload failed:", error);
-    uploadError.value = "Failed to upload image. Please try again.";
+    // Show the detailed error message when available
+    uploadError.value =
+      error.message || "Failed to upload image. Please try again.";
     imagePreview.value = null;
   } finally {
     uploading.value = false;
