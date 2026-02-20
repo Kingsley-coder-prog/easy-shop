@@ -67,6 +67,7 @@ const saveProduct = async (data) => {
       toast.success("Product updated");
     } else {
       await store.createProduct(data);
+      await store.fetchProducts();
       toast.success("Product created");
     }
     closeModal();

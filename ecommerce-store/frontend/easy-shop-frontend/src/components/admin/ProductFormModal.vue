@@ -45,12 +45,12 @@
             </label>
             <select v-model="form.category" required class="input w-full">
               <option value="">Select a category</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Clothing">Clothing</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Fruits">Fruits</option>
               <option value="Food">Food</option>
               <option value="Books">Books</option>
-              <option value="Home">Home & Garden</option>
-              <option value="Sports">Sports</option>
+              <option value="Home">Hygiene</option>
+              <option value="Snacks">Snacks</option>
               <option value="Other">Other</option>
             </select>
           </div>
