@@ -75,8 +75,15 @@ export const useProductStore = defineStore("products", {
     },
 
     async createProduct(payload) {
-      await productService.create(payload);
-      await this.fetchProducts();
+      console.log("🎯 createProduct called with payload:", payload);
+      try {
+        const res = await productService.create(payload);
+        console.log("✅ Product created, response:", res);
+        await this.fetchProducts();
+      } catch (err) {
+        console.error("❌ createProduct failed:", err);
+        throw err;
+      }
     },
 
     async updateProduct(id, payload) {

@@ -1,4 +1,13 @@
-const PRODUCT_CATEGORIES = ["food", "snacks", "drinks", "household", "hygiene"];
+const PRODUCT_CATEGORIES = [
+  "Food",
+  "Snacks",
+  "Drinks",
+  "Farm Products",
+  "Hygiene",
+  "Books",
+  "Clothing",
+  "Other",
+];
 const ORDER_STATUS = ["pending", "paid", "shipped", "completed"];
 const USER_ROLE = ["user", "admin"];
 

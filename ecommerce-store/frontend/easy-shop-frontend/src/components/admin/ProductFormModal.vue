@@ -48,7 +48,7 @@
               <option value="Drinks">Drinks</option>
               <option value="Fruits">Fruits</option>
               <option value="Food">Food</option>
-              <option value="Books">Books</option>
+              <option value="Farm Products">Farm Products</option>
               <option value="Home">Hygiene</option>
               <option value="Snacks">Snacks</option>
               <option value="Other">Other</option>
@@ -265,6 +265,7 @@ const submit = () => {
     return;
   }
 
+  console.log("📤 Submitting product form:", { ...form });
   emit("save", { ...form });
 };
 </script>
