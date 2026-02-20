@@ -1,57 +1,92 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">Orders</h1>
+  <div>
+    <h1 class="text-2xl font-bold mb-6">Orders Management</h1>
 
-    <div v-if="orderStore.loading" class="text-center py-10">Loading...</div>
+    <div v-if="orderStore.loading" class="text-center py-10">
+      <div
+        class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+      ></div>
+    </div>
 
     <div v-else>
-      <table class="w-full bg-white rounded shadow">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="p-3 text-left">Order ID</th>
-            <th class="p-3 text-left">User</th>
-            <th class="p-3 text-left">Amount (₦)</th>
-            <th class="p-3 text-left">Status</th>
-            <th class="p-3 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="o in paginatedOrders"
-            :key="o.order_id"
-            class="border-t hover:bg-gray-50"
-          >
-            <td class="p-3 text-sm font-mono">
-              {{ o.order_id.slice(0, 8) }}...
-            </td>
-            <td class="p-3 text-sm">{{ o.user_name }}</td>
-            <td class="p-3 text-sm font-semibold">₦{{ o.amount_naira }}</td>
-            <td class="p-3 text-sm">
-              <span
-                :class="{
-                  'bg-yellow-100 text-yellow-700': o.status === 'Pending',
-                  'bg-blue-100 text-blue-700': o.status === 'ready',
-                  'bg-green-100 text-green-700': o.status === 'Paid',
-                }"
-                class="px-2 py-1 rounded text-xs font-semibold"
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
               >
-                {{ o.status }}
-              </span>
-            </td>
-            <td class="p-3 text-right">
-              <button
-                @click="markReady(o.order_id)"
-                class="text-blue-600 hover:text-blue-700 hover:underline"
+                Order ID
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
               >
-                Mark Ready
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                Customer
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Amount
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                class="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr
+              v-for="o in paginatedOrders"
+              :key="o.order_id"
+              class="hover:bg-gray-50 transition"
+            >
+              <td class="px-6 py-4 text-sm font-mono text-gray-600">
+                {{ o.order_id.slice(0, 12) }}...
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-800">
+                {{ o.user_name || "—" }}
+              </td>
+              <td class="px-6 py-4 text-sm font-semibold text-gray-900">
+                ₦{{ o.amount_naira }}
+              </td>
+              <td class="px-6 py-4 text-sm">
+                <span
+                  :class="{
+                    'bg-yellow-100 text-yellow-800': o.status === 'Pending',
+                    'bg-blue-100 text-blue-800': o.status === 'ready',
+                    'bg-green-100 text-green-800': o.status === 'Paid',
+                    'bg-gray-100 text-gray-800': ![
+                      'Pending',
+                      'ready',
+                      'Paid',
+                    ].includes(o.status),
+                  }"
+                  class="px-3 py-1 rounded-full text-xs font-semibold inline-block"
+                >
+                  {{ o.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button
+                  @click="markReady(o.order_id)"
+                  class="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700 transition"
+                >
+                  Mark Ready
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Pagination Controls -->
-      <div v-if="totalPages > 1" class="mt-4 flex items-center justify-between">
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
         <div class="text-sm text-gray-600">
           Showing {{ startIndex + 1 }}-{{
             Math.min(endIndex, orderStore.orders.length)
@@ -62,17 +97,19 @@
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
-            class="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
           >
             ← Previous
           </button>
-          <div class="px-3 py-2 border rounded bg-gray-50">
+          <div
+            class="px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg text-sm font-semibold"
+          >
             Page {{ currentPage }} of {{ totalPages }}
           </div>
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"
-            class="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
           >
             Next →
           </button>

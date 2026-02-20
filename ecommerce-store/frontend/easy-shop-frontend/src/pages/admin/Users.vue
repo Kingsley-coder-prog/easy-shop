@@ -1,60 +1,75 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold">Users</h1>
+    <h1 class="text-2xl font-bold mb-6">Users Management</h1>
+
+    <div v-if="userStore.loading" class="text-center py-10">
+      <div
+        class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+      ></div>
     </div>
 
-    <div v-if="userStore.loading" class="p-4 text-center text-gray-500">
-      Loading users...
-    </div>
-
-    <div
-      v-else-if="userStore.users.length === 0"
-      class="p-4 text-center text-gray-500"
-    >
-      No users found
+    <div v-else-if="userStore.users.length === 0" class="text-center py-10">
+      <p class="text-gray-500">No users found</p>
     </div>
 
     <div v-else>
-      <div class="bg-white rounded shadow overflow-hidden">
-        <table class="w-full text-sm">
-          <thead class="bg-gray-50 text-left text-gray-500">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th class="p-3">Name</th>
-              <th class="p-3">Email</th>
-              <th class="p-3">Role</th>
-              <th class="p-3 text-right">Actions</th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Name
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Email
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Role
+              </th>
+              <th
+                class="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="divide-y divide-gray-200">
             <tr
               v-for="u in paginatedUsers"
               :key="u.id"
-              class="border-t hover:bg-gray-50"
+              class="hover:bg-gray-50 transition"
             >
-              <td class="p-3">{{ u.name || u.fullName || "—" }}</td>
-              <td class="p-3 text-xs font-mono">{{ u.email }}</td>
-              <td class="p-3">
+              <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                {{ u.name || u.fullName || "—" }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{ u.email }}</td>
+              <td class="px-6 py-4 text-sm">
                 <span
                   :class="{
-                    'bg-purple-100 text-purple-700': u.role === 'admin',
-                    'bg-gray-100 text-gray-700': u.role === 'user',
+                    'bg-purple-100 text-purple-800': u.role === 'admin',
+                    'bg-gray-100 text-gray-800': u.role === 'user' || !u.role,
                   }"
-                  class="px-2 py-1 rounded text-xs font-semibold"
+                  class="px-3 py-1 rounded-full text-xs font-semibold inline-block"
                 >
                   {{ u.role || "user" }}
                 </span>
               </td>
-              <td class="p-3 text-right space-x-2">
+              <td class="px-6 py-4 text-right space-x-2">
                 <button
                   @click="editUser(u)"
-                  class="text-blue-600 hover:text-blue-700"
+                  class="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded hover:bg-blue-700 transition"
                 >
                   Edit
                 </button>
                 <button
                   @click="removeUser(u)"
-                  class="text-red-600 hover:text-red-700"
+                  class="px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded hover:bg-red-700 transition"
                 >
                   Delete
                 </button>
@@ -65,7 +80,7 @@
       </div>
 
       <!-- Pagination Controls -->
-      <div v-if="totalPages > 1" class="mt-4 flex items-center justify-between">
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between">
         <div class="text-sm text-gray-600">
           Showing {{ startIndex + 1 }}-{{
             Math.min(endIndex, userStore.users.length)
@@ -76,17 +91,19 @@
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
-            class="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
           >
             ← Previous
           </button>
-          <div class="px-3 py-2 border rounded bg-gray-50">
+          <div
+            class="px-4 py-2 border border-gray-300 bg-gray-50 rounded-lg text-sm font-semibold"
+          >
             Page {{ currentPage }} of {{ totalPages }}
           </div>
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"
-            class="px-3 py-2 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
           >
             Next →
           </button>
@@ -152,7 +169,7 @@ const saveUser = async (payload) => {
   try {
     await userStore.updateUser(id, payload);
     editingUser.value = null;
-    alert("User updated");
+    alert("User updated successfully");
   } catch (err) {
     console.error(err);
     alert("Failed to update user");
@@ -162,9 +179,10 @@ const saveUser = async (payload) => {
 const removeUser = async (u) => {
   const id = u.id || u._id || u.user_id;
   if (!id) return alert("User id not found");
+  if (!confirm("Are you sure you want to delete this user?")) return;
   try {
     await userStore.deleteUser(id);
-    alert("User deleted");
+    alert("User deleted successfully");
   } catch (err) {
     console.error(err);
     alert("Failed to delete user");

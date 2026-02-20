@@ -8,19 +8,18 @@ import Cart from "@/pages/cart/Cart.vue";
 import Checkout from "@/pages/checkout/Checkout.vue";
 import OrderConfirmation from "@/pages/orders/OrderConfirmation.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
+import AdminDashboard from "@/pages/admin/Dashboard.vue";
 import AdminProducts from "@/pages/admin/Products.vue";
 import AdminOrders from "@/pages/admin/Orders.vue";
 import AdminUsers from "@/pages/admin/Users.vue";
+import AdminAnalytics from "@/pages/admin/Analytics.vue";
+import AdminReports from "@/pages/admin/Reports.vue";
+import AdminSettings from "@/pages/admin/Settings.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
   { path: "/register", component: Register },
   { path: "/login", component: Login },
-  // {
-  //   path: "/admin",
-  //   component: AdminDashboard,
-  //   meta: { requiresAdmin: true },
-  // },
   {
     path: "/products",
     component: Products,
@@ -45,9 +44,14 @@ const routes = [
     component: AdminLayout,
     meta: { requiresAdmin: true },
     children: [
+      { path: "dashboard", component: AdminDashboard },
       { path: "products", component: AdminProducts },
       { path: "orders", component: AdminOrders },
       { path: "users", component: AdminUsers },
+      { path: "analytics", component: AdminAnalytics },
+      { path: "reports", component: AdminReports },
+      { path: "settings", component: AdminSettings },
+      { path: "", redirect: "dashboard" },
     ],
   },
 ];
