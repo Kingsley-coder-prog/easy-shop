@@ -34,7 +34,9 @@
     "swagger-ui-express": "^4.6.0",
     "uuid": "^13.0.0",
     "validator": "^13.6.0",
-    "xss-clean": "^0.1.1"
+    "xss-clean": "^0.1.1",
+    "@aws-sdk/client-ses": "^3.375.0",
+    "handlebars": "^4.7.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.9"

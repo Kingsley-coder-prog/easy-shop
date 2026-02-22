@@ -192,6 +192,22 @@ All sensitive configuration is managed through `.env` file:
 
 ---
 
+### Email / SMTP (Order Notifications)
+The backend can send transactional emails (order received, order ready) via SMTP. Set the following environment variables in your `.env` or deployment settings:
+
+```
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_username
+SMTP_PASS=your_smtp_password
+EMAIL_FROM="ShopEasy <no-reply@example.com>"
+```
+
+The service uses `nodemailer` and the helpers are located at `services/email.js`. Emails are sent when a payment webhook marks an order as `Paid`, and when an admin updates an order status to `ready`.
+
+Note: The codebase now supports AWS SES using the AWS SDK. To use SES set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` in your environment. Ensure your SES sending identity (email or domain) is verified and granted production access in the AWS SES console. The SES-backed implementation uses `services/email.js` and the AWS SDK `@aws-sdk/client-ses` package.
+
+
 ## API Endpoints
 
 ### Base URL
@@ -244,6 +260,7 @@ POST   /payments/verify            - Verify payment
 ### Webhook Endpoints (`/webhooks`)
 ```
 POST   /webhooks/paystack          - Paystack payment webhook
+POST   /webhooks/sns              - AWS SNS endpoint for SES bounce/complaint/subscription notifications
 ```
 
 ---

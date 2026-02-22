@@ -3,6 +3,7 @@ const {
   updateOrderService,
   getOrdersService,
 } = require("../models/ordersSheet");
+const { sendOrderReceived } = require("../services/email");
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
@@ -61,9 +62,17 @@ async function paystackWebhook(req, res) {
     }
 
     // 5️⃣ Mark order as paid
-    await updateOrderService(order_id, {
+    const result = await updateOrderService(order_id, {
       status: "Paid",
     });
+
+    // 6️⃣ Send email notification to customer
+    try {
+      const updatedOrder = result.order || order;
+      await sendOrderReceived(updatedOrder);
+    } catch (err) {
+      console.error("Failed to send order received email", err);
+    }
 
     return res.sendStatus(200);
   } catch (err) {

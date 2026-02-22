@@ -6,6 +6,7 @@ const {
   updateOrderService,
   deleteOrderService,
 } = require("../models/ordersSheet");
+const { sendOrderReady } = require("../services/email");
 
 const createOrder = async (req, res) => {
   try {
@@ -36,6 +37,20 @@ const updateOrder = async (req, res) => {
   try {
     const result = await updateOrderService(req.params.order_id, req.body);
     if (result.error) return res.status(StatusCodes.NOT_FOUND).json(result);
+
+    // If order status was changed to 'ready', notify customer
+    try {
+      if (
+        result.order &&
+        result.order.status &&
+        result.order.status.toLowerCase() === "ready"
+      ) {
+        await sendOrderReady(result.order);
+      }
+    } catch (err) {
+      console.error("Failed to send order ready email", err);
+    }
+
     return res.status(StatusCodes.OK).json(result);
   } catch (error) {
     return res.status(500).json({ error: "Server error" });
