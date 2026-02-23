@@ -31,7 +31,12 @@
               <th
                 class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
               >
-                Status
+                Payment Status
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+              >
+                Order Status
               </th>
               <th
                 class="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider"
@@ -60,17 +65,36 @@
                   :class="{
                     'bg-yellow-100 text-yellow-800':
                       o.payment_status === 'pending',
-                    'bg-blue-100 text-blue-800': o.order_status === 'ready',
                     'bg-green-100 text-green-800': o.payment_status === 'paid',
+                    'bg-gray-100 text-gray-800': !['pending', 'paid'].includes(
+                      o.payment_status
+                    ),
+                  }"
+                  class="px-3 py-1 rounded-full text-xs font-semibold inline-block capitalize"
+                >
+                  {{ o.payment_status || "pending" }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm">
+                <span
+                  :class="{
+                    'bg-blue-100 text-blue-800': o.order_status === 'ready',
+                    'bg-purple-100 text-purple-800':
+                      o.order_status === 'pending',
+                    'bg-indigo-100 text-indigo-800':
+                      o.order_status === 'shipped',
+                    'bg-green-100 text-green-800':
+                      o.order_status === 'completed',
                     'bg-gray-100 text-gray-800': ![
                       'pending',
                       'ready',
-                      'paid',
-                    ].includes(o.payment_status || o.order_status),
+                      'shipped',
+                      'completed',
+                    ].includes(o.order_status),
                   }"
-                  class="px-3 py-1 rounded-full text-xs font-semibold inline-block"
+                  class="px-3 py-1 rounded-full text-xs font-semibold inline-block capitalize"
                 >
-                  {{ o.payment_status || o.order_status || o.status }}
+                  {{ o.order_status || "pending" }}
                 </span>
               </td>
               <td class="px-6 py-4 text-right">

@@ -351,14 +351,15 @@ Tracks customer orders:
 - `order_id` - Unique identifier
 - `user_id` - Associated user
 - `total_amount` - Order total in kobo
-- `status` - Order status (pending/completed/cancelled)
-- `payment_reference` - Paystack reference
-- `items` - Order items (JSON format)
+ - `payment_status` - Payment state for the order (`pending` | `paid` | `failed`)
+ - `order_status` - Fulfillment state for the order (`pending` | `ready` | `shipped` | `completed`)
+ - `payment_reference` - Paystack reference
+ - `items` - Order items (JSON format)
 - `created_at` - Order date
 
 **Key Functions:**
 - `getOrders()` - Fetch all orders
-- `getOrdersByStatus(status)` - Filter by status
+ - `getOrdersByStatus(status)` - Filter by status. Note: the filter checks both `payment_status` and `order_status` (case-insensitive). For example, `GET /orders/status/paid` will return orders whose `payment_status` is `paid` or whose `order_status` equals `paid`.
 - `createOrder(orderData)` - Create new order
 - `updateOrder(order_id, updates)` - Update order status
 - `deleteOrder(order_id)` - Cancel order

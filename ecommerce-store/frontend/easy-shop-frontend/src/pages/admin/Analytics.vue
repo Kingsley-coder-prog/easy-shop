@@ -157,7 +157,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useProductStore } from "@/stores/product.store";
 import { useOrderStore } from "@/stores/order.store";
 import { useUserStore } from "@/stores/user.store";
@@ -188,6 +188,22 @@ onMounted(async () => {
     userStore.fetchUsers(),
   ]);
   initCharts();
+});
+
+// Re-init charts when underlying computed data changes
+watch(categoryBreakdown, () => {
+  try {
+    initCharts();
+  } catch (e) {
+    // ignore
+  }
+});
+watch(monthlyRevenue, () => {
+  try {
+    initCharts();
+  } catch (e) {
+    // ignore
+  }
 });
 
 const usersCount = computed(() => userStore.users.length);

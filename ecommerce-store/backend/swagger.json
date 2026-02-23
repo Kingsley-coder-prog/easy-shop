@@ -155,10 +155,16 @@
             "description": "Total order amount in kobo",
             "example": 150000
           },
-          "status": {
+          "order_status": {
             "type": "string",
-            "enum": ["pending", "completed", "cancelled"],
-            "description": "Order status",
+            "enum": ["pending", "ready", "shipped", "completed"],
+            "description": "Order (fulfillment) status",
+            "example": "pending"
+          },
+          "payment_status": {
+            "type": "string",
+            "enum": ["pending", "paid", "failed"],
+            "description": "Payment status for the order",
             "example": "pending"
           },
           "payment_reference": {
@@ -889,9 +895,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "status": {
+                  "order_status": {
                     "type": "string",
-                    "enum": ["pending", "completed", "cancelled"]
+                    "enum": ["pending", "ready", "shipped", "completed"]
+                  },
+                  "payment_status": {
+                    "type": "string",
+                    "enum": ["pending", "paid", "failed"]
                   }
                 }
               }

@@ -75,7 +75,8 @@ function orderReceivedHtml(order) {
       name: order.user_name || order.name || "Customer",
       order_id: order.order_id,
       amount_naira: order.amount_naira,
-      status: order.status,
+      payment_status: order.payment_status || order.status || "pending",
+      order_status: order.order_status || order.status || "pending",
     });
   }
   return `Order ${order.order_id} received`;
@@ -87,7 +88,8 @@ function orderReadyHtml(order) {
       name: order.user_name || order.name || "Customer",
       order_id: order.order_id,
       amount_naira: order.amount_naira,
-      status: order.status,
+      payment_status: order.payment_status || order.status || "pending",
+      order_status: order.order_status || order.status || "pending",
     });
   }
   return `Order ${order.order_id} is ready`;
