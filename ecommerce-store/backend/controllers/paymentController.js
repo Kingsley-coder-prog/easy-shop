@@ -26,7 +26,7 @@ async function createPayment(req, res) {
         .json({ error: "Order not found" });
     }
 
-    if (order.status !== "Pending") {
+    if (order.payment_status !== "pending") {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: "Only pending orders can be paid for",
       });
@@ -37,7 +37,7 @@ async function createPayment(req, res) {
     const paystackRes = await initializePayment(
       order.email,
       amount_kobo,
-      order_id
+      order_id,
     );
 
     const { authorization_url, reference } = paystackRes.data;
@@ -115,15 +115,15 @@ async function verifyPaymentCallback(req, res) {
     }
 
     // 7️⃣ Prevent double payment
-    if (order.status === "Paid") {
+    if (order.payment_status === "paid") {
       return res.status(200).json({
         message: "Order already marked as paid",
       });
     }
 
-    // 8️⃣ Mark order as paid
+    // 8️⃣ Mark order payment as paid (do NOT change order_status)
     await updateOrderService(order_id, {
-      status: "Paid",
+      payment_status: "paid",
     });
 
     return res.status(200).json({ message: "Payment successful" });

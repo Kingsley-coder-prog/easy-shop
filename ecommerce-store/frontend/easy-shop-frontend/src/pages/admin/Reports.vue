@@ -155,13 +155,15 @@
               <td class="px-6 py-3">
                 <span
                   :class="{
-                    'bg-green-100 text-green-800': order.status === 'Paid',
-                    'bg-yellow-100 text-yellow-800': order.status === 'Pending',
-                    'bg-blue-100 text-blue-800': order.status === 'ready',
+                    'bg-green-100 text-green-800':
+                      order.payment_status === 'paid',
+                    'bg-yellow-100 text-yellow-800':
+                      order.payment_status === 'pending',
+                    'bg-blue-100 text-blue-800': order.order_status === 'ready',
                   }"
                   class="px-3 py-1 rounded-full text-xs font-semibold"
                 >
-                  {{ order.status }}
+                  {{ order.payment_status || order.status }}
                 </span>
               </td>
               <td class="px-6 py-3 text-gray-600">
@@ -240,37 +242,44 @@ const totalSales = computed(() => {
 });
 
 const paidOrders = computed(() => {
-  return orderStore.orders.filter((o) => o.status === "Paid").length;
+  return orderStore.orders.filter((o) => o.payment_status === "paid").length;
 });
 
 const pendingOrders = computed(() => {
-  return orderStore.orders.filter((o) => o.status === "Pending").length;
+  return orderStore.orders.filter((o) => o.payment_status === "pending").length;
 });
 
 const readyOrders = computed(() => {
-  return orderStore.orders.filter((o) => o.status === "ready").length;
+  return orderStore.orders.filter((o) => o.order_status === "ready").length;
 });
 
 const topProducts = computed(() => {
   const productSales = {};
 
   orderStore.orders.forEach((order) => {
-    const product = productStore.products.find(
-      (p) => p.product_id === order.product_id || p._id === order.product_id
-    );
-    if (product) {
-      if (!productSales[product._id || product.product_id]) {
-        productSales[product._id || product.product_id] = {
-          name: product.name,
-          price: product.price,
-          orders: 0,
-          revenue: 0,
-        };
+    // items_json is an array of items with product details
+    const items = order.items_json || [];
+    items.forEach((item) => {
+      const productId = item.product_id || item._id;
+      const product = productStore.products.find(
+        (p) => p.product_id === productId || p._id === productId
+      );
+
+      if (product) {
+        const pid = product._id || product.product_id;
+        if (!productSales[pid]) {
+          productSales[pid] = {
+            name: product.name,
+            price: product.price || product.price_naira,
+            orders: 0,
+            revenue: 0,
+          };
+        }
+        productSales[pid].orders += item.quantity || 1;
+        productSales[pid].revenue +=
+          (item.price || item.price_naira || 0) * (item.quantity || 1);
       }
-      productSales[product._id || product.product_id].orders += 1;
-      productSales[product._id || product.product_id].revenue +=
-        parseInt(order.amount_naira) || 0;
-    }
+    });
   });
 
   return Object.values(productSales)
@@ -306,12 +315,18 @@ function formatDate(dateStr) {
 }
 
 function exportToCSV() {
-  const headers = ["Order ID", "Customer", "Amount (₦)", "Status", "Date"];
+  const headers = [
+    "Order ID",
+    "Customer",
+    "Amount (₦)",
+    "Payment Status",
+    "Date",
+  ];
   const rows = recentOrders.value.map((o) => [
     o.order_id,
     o.user_name,
     o.amount_naira,
-    o.status,
+    o.payment_status || o.status,
     formatDate(o.created_at),
   ]);
 

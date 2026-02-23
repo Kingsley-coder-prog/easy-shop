@@ -38,12 +38,12 @@ const updateOrder = async (req, res) => {
     const result = await updateOrderService(req.params.order_id, req.body);
     if (result.error) return res.status(StatusCodes.NOT_FOUND).json(result);
 
-    // If order status was changed to 'ready', notify customer
+    // If order_status was changed to 'ready', notify customer
     try {
       if (
         result.order &&
-        result.order.status &&
-        result.order.status.toLowerCase() === "ready"
+        result.order.order_status &&
+        result.order.order_status.toLowerCase() === "ready"
       ) {
         await sendOrderReady(result.order);
       }

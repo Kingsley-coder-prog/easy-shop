@@ -8,7 +8,13 @@ const PRODUCT_CATEGORIES = [
   "Clothing",
   "Other",
 ];
-const ORDER_STATUS = ["pending", "paid", "shipped", "completed"];
+const ORDER_STATUS = ["pending", "ready", "shipped", "completed"];
+const PAYMENT_STATUS = ["pending", "paid", "failed"];
 const USER_ROLE = ["user", "admin"];
 
-module.exports = { PRODUCT_CATEGORIES, ORDER_STATUS, USER_ROLE };
+module.exports = {
+  PRODUCT_CATEGORIES,
+  ORDER_STATUS,
+  PAYMENT_STATUS,
+  USER_ROLE,
+};

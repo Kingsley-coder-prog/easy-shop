@@ -1,5 +1,5 @@
 const { getSheets, SPREADSHEET_ID } = require("../services/googleSheets");
-const { ORDER_STATUS } = require("../utils/enum");
+const { ORDER_STATUS, PAYMENT_STATUS } = require("../utils/enum");
 const { generateUUID } = require("../utils/uuid.js");
 
 const ORDERS_RANGE = "Orders!A2:Z"; // Start reading from row 2
@@ -10,7 +10,8 @@ const HEADERS = [
   "email",
   "items_json",
   "amount_naira",
-  "status",
+  "payment_status",
+  "order_status",
   "created_at",
   "stripe_session_id",
 ];
@@ -50,7 +51,11 @@ async function getOrdersService(filterStatus = null) {
 
   if (filterStatus) {
     orders = orders.filter(
-      (o) => o.status.toLowerCase() === filterStatus.toLowerCase()
+      (o) =>
+        (o.payment_status &&
+          o.payment_status.toLowerCase() === filterStatus.toLowerCase()) ||
+        (o.order_status &&
+          o.order_status.toLowerCase() === filterStatus.toLowerCase()),
     );
   }
   return { numberOfOrders: orders.length, orders };
@@ -60,10 +65,15 @@ async function getOrdersService(filterStatus = null) {
 async function createOrderService(data) {
   const sheets = await getSheets();
 
-  // Validate Status
-  if (!ORDER_STATUS.includes(data.status)) {
-    data.status = "Pending";
-  }
+  // Validate Order Status
+  const orderStatus = ORDER_STATUS.includes(data.order_status)
+    ? data.order_status
+    : "pending";
+
+  // Validate Payment Status
+  const paymentStatus = PAYMENT_STATUS.includes(data.payment_status)
+    ? data.payment_status
+    : "pending";
 
   const newOrder = {
     order_id: generateUUID(),
@@ -71,7 +81,8 @@ async function createOrderService(data) {
     email: data.email || "",
     items_json: JSON.stringify(data.items_json || []),
     amount_naira: Number(data.amount_naira) || 0,
-    status: data.status,
+    payment_status: paymentStatus,
+    order_status: orderStatus,
     created_at: new Date().toISOString(),
     stripe_session_id: data.stripe_session_id || "",
   };
@@ -183,7 +194,7 @@ async function getOrdersSheetId() {
   });
 
   const sheet = metadata.data.sheets.find(
-    (s) => s.properties.title === "Orders"
+    (s) => s.properties.title === "Orders",
   );
 
   if (!sheet) throw new Error("Orders sheet not found");

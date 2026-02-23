@@ -208,12 +208,22 @@ const categoryBreakdown = computed(() => {
   const breakdown = {};
 
   orderStore.orders.forEach((order) => {
-    const category = order.category || "Uncategorized";
-    if (!breakdown[category]) {
-      breakdown[category] = { category, revenue: 0, products: 0 };
-    }
-    breakdown[category].revenue += parseInt(order.amount_naira) || 0;
-    breakdown[category].products += 1;
+    // Parse items_json to extract product categories
+    const items = order.items_json || [];
+    items.forEach((item) => {
+      // Find product to get category
+      const product = productStore.products.find(
+        (p) => p.product_id === item.product_id || p._id === item.product_id
+      );
+      const category = product?.category || "Uncategorized";
+
+      if (!breakdown[category]) {
+        breakdown[category] = { category, revenue: 0, products: 0 };
+      }
+      breakdown[category].revenue +=
+        (item.price || item.price_naira || 0) * (item.quantity || 1);
+      breakdown[category].products += item.quantity || 1;
+    });
   });
 
   const total = totalSales.value;

@@ -44,7 +44,7 @@ async function paystackWebhook(req, res) {
     if (!order) return res.sendStatus(200);
 
     // 4️⃣ Safety checks
-    if (order.status === "Paid") return res.sendStatus(200);
+    if (order.payment_status === "paid") return res.sendStatus(200);
 
     if (order.stripe_session_id !== reference) {
       console.error("Webhook reference mismatch");
@@ -61,9 +61,9 @@ async function paystackWebhook(req, res) {
       return res.sendStatus(200);
     }
 
-    // 5️⃣ Mark order as paid
+    // 5️⃣ Mark order payment as paid (do NOT change order_status)
     const result = await updateOrderService(order_id, {
-      status: "Paid",
+      payment_status: "paid",
     });
 
     // 6️⃣ Send email notification to customer
