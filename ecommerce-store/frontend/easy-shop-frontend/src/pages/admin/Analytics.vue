@@ -181,31 +181,6 @@ const categoryChartRef = ref(null);
 let revenueChart = null;
 let categoryChart = null;
 
-onMounted(async () => {
-  await Promise.all([
-    productStore.fetchProducts(),
-    orderStore.fetchOrders(),
-    userStore.fetchUsers(),
-  ]);
-  initCharts();
-});
-
-// Re-init charts when underlying computed data changes
-watch(categoryBreakdown, () => {
-  try {
-    initCharts();
-  } catch (e) {
-    // ignore
-  }
-});
-watch(monthlyRevenue, () => {
-  try {
-    initCharts();
-  } catch (e) {
-    // ignore
-  }
-});
-
 const usersCount = computed(() => userStore.users.length);
 const ordersCount = computed(() => orderStore.orders.length);
 
@@ -279,6 +254,31 @@ const monthlyRevenue = computed(() => {
     });
   }
   return last12Months;
+});
+
+// Re-init charts when underlying computed data changes
+watch(categoryBreakdown, () => {
+  try {
+    initCharts();
+  } catch (e) {
+    // ignore
+  }
+});
+watch(monthlyRevenue, () => {
+  try {
+    initCharts();
+  } catch (e) {
+    // ignore
+  }
+});
+
+onMounted(async () => {
+  await Promise.all([
+    productStore.fetchProducts(),
+    orderStore.fetchOrders(),
+    userStore.fetchUsers(),
+  ]);
+  initCharts();
 });
 
 function initCharts() {
