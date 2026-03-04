@@ -74,6 +74,29 @@ async function paystackWebhook(req, res) {
       console.error("Failed to send order received email", err);
     }
 
+    // 7️⃣ Send admin alert about new payment
+    try {
+      const { sendAdminAlert } = require("../services/email");
+      const adminHtml = `
+        <div style="font-family: Arial, Helvetica, sans-serif;">
+          <h2>New Payment Received ✅</h2>
+          <p>A customer has successfully paid for their order.</p>
+          <ul>
+            <li><strong>Order ID:</strong> ${order_id}</li>
+            <li><strong>Customer Email:</strong> ${order.email}</li>
+            <li><strong>Amount:</strong> ₦${order.amount_naira}</li>
+            <li><strong>Reference:</strong> ${reference}</li>
+            <li><strong>Time:</strong> ${new Date().toLocaleString()}</li>
+          </ul>
+          <p>Action: Please process this order and mark as ready when complete.</p>
+          <p>— ShopEasy System</p>
+        </div>
+      `;
+      await sendAdminAlert(`New Payment: Order ${order_id}`, adminHtml);
+    } catch (err) {
+      console.error("Failed to send admin alert", err);
+    }
+
     return res.sendStatus(200);
   } catch (err) {
     console.error("PAYSTACK WEBHOOK ERROR", err);

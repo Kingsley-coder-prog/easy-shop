@@ -35,16 +35,32 @@ const getOrderByStatus = async (req, res) => {
 
 const updateOrder = async (req, res) => {
   try {
+    console.log("📝 Updating order:", {
+      order_id: req.params.order_id,
+      body: req.body,
+    });
+
     const result = await updateOrderService(req.params.order_id, req.body);
     if (result.error) return res.status(StatusCodes.NOT_FOUND).json(result);
 
-    // If order_status was changed to 'ready', notify customer
+    console.log("✅ Order updated:", {
+      order_id: req.params.order_id,
+      order: result.order,
+    });
+
+    // If order_status was changed to 'ready', notify customers
     try {
+      console.log("🔍 Checking if order status is ready:", {
+        order_status: result.order?.order_status,
+        isReady: result.order?.order_status?.toLowerCase() === "ready",
+      });
+
       if (
         result.order &&
         result.order.order_status &&
         result.order.order_status.toLowerCase() === "ready"
       ) {
+        console.log("🚀 Order is ready, sending email to:", result.order.email);
         await sendOrderReady(result.order);
       }
     } catch (err) {
@@ -53,6 +69,7 @@ const updateOrder = async (req, res) => {
 
     return res.status(StatusCodes.OK).json(result);
   } catch (error) {
+    console.error("❌ Error updating order:", error);
     return res.status(500).json({ error: "Server error" });
   }
 };

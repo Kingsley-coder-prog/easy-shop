@@ -106,7 +106,17 @@ module.exports = {
     );
   },
   sendOrderReady: async (order) => {
-    if (!order || !order.email) return;
+    console.log("📧 Sending order ready email", {
+      order_id: order?.order_id,
+      email: order?.email,
+    });
+    if (!order || !order.email) {
+      console.warn("⚠️ Cannot send order ready email: missing order or email", {
+        order: order?.order_id,
+        email: order?.email,
+      });
+      return;
+    }
     return sendMail(
       order.email,
       `Order ${order.order_id} is ready`,
