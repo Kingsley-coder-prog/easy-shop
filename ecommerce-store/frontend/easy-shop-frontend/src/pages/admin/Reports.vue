@@ -257,27 +257,39 @@ const topProducts = computed(() => {
   const productSales = {};
 
   orderStore.orders.forEach((order) => {
-    // items_json is an array of items with product details
-    const items = order.items_json || [];
-    items.forEach((item) => {
-      const productId = item.product_id || item._id;
-      const product = productStore.products.find(
-        (p) => p.product_id === productId || p._id === productId
-      );
+    // Only count paid orders for top products
+    if (order.payment_status !== "paid") return;
 
-      if (product) {
-        const pid = product._id || product.product_id;
-        if (!productSales[pid]) {
-          productSales[pid] = {
-            name: product.name,
-            price: product.price || product.price_naira,
+    // items_json might be string or array
+    let items = order.items_json || [];
+    if (typeof items === "string") {
+      try {
+        items = JSON.parse(items);
+      } catch (e) {
+        items = [];
+      }
+    }
+
+    if (!Array.isArray(items)) return;
+
+    items.forEach((item) => {
+      const productId = item.product_id || item.id || item._id;
+      const productName = item.name || item.product_name;
+      const productPrice = parseFloat(item.price || item.price_naira || 0);
+      const quantity = parseInt(item.quantity || 1);
+
+      if (productName && productPrice) {
+        if (!productSales[productId || productName]) {
+          productSales[productId || productName] = {
+            name: productName,
+            price: productPrice,
             orders: 0,
             revenue: 0,
           };
         }
-        productSales[pid].orders += item.quantity || 1;
-        productSales[pid].revenue +=
-          (item.price || item.price_naira || 0) * (item.quantity || 1);
+        productSales[productId || productName].orders += quantity;
+        productSales[productId || productName].revenue +=
+          productPrice * quantity;
       }
     });
   });

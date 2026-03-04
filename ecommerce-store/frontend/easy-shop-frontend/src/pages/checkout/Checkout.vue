@@ -74,7 +74,8 @@ async function payNow() {
       email: authStore.user.email,
       items_json: cartItems.value,
       amount_naira: totalPrice.value,
-      status: "Pending",
+      payment_status: "pending",
+      order_status: "pending",
     });
 
     const orderId = orderRes.data.order.order_id;

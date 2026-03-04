@@ -16,7 +16,9 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Total Sales</p>
-            <p class="text-2xl font-bold text-gray-900">₦{{ totalSales }}</p>
+            <p class="text-2xl font-bold text-gray-900">
+              ₦{{ totalSales.toLocaleString() }}
+            </p>
           </div>
         </div>
       </BaseCard>
@@ -69,20 +71,56 @@
             </h3>
           </div>
         </template>
-        <div class="h-40 flex items-end gap-2">
-          <div v-for="(d, i) in ordersByDay" :key="i" class="flex-1">
-            <div class="h-full flex items-end">
-              <div
-                :style="{
-                  height:
-                    d.count === 0 ? '6px' : (d.count / maxOrders) * 100 + '%',
-                }"
-                class="w-full bg-blue-500 rounded-t hover:bg-blue-600 transition cursor-pointer"
-                :title="`${d.label}: ${d.count} orders`"
-              ></div>
+        <div class="h-80 flex flex-col">
+          <!-- Y-axis labels and bars -->
+          <div class="flex-1 flex">
+            <!-- Y-axis -->
+            <div
+              class="w-8 flex flex-col justify-between text-xs text-gray-500 pr-2"
+            >
+              <span>{{ maxOrders }}</span>
+              <span>{{ Math.floor(maxOrders / 2) }}</span>
+              <span>0</span>
             </div>
-            <div class="text-xs text-center text-gray-600 mt-2 font-semibold">
-              {{ d.label }}
+            <!-- Bars -->
+            <div
+              class="flex-1 flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
+            >
+              <div
+                v-for="(d, i) in ordersByDay"
+                :key="i"
+                class="flex-1 flex flex-col items-center justify-end"
+              >
+                <div
+                  :style="{
+                    height:
+                      d.count === 0 ? '2px' : `${(d.count / maxOrders) * 100}%`,
+                  }"
+                  class="w-full bg-blue-500 hover:bg-blue-600 transition cursor-pointer shadow-sm rounded-t relative group"
+                  :title="`${d.label}: ${d.count} orders`"
+                >
+                  <div
+                    v-if="d.count > 0"
+                    class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700 opacity-0 group-hover:opacity-100 transition"
+                  >
+                    {{ d.count }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- X-axis labels -->
+          <div class="flex ml-8 mt-1">
+            <div class="flex-1 flex gap-3 pl-2">
+              <div
+                v-for="(d, i) in ordersByDay"
+                :key="i"
+                class="flex-1 text-center"
+              >
+                <div class="text-xs text-gray-600 font-medium">
+                  {{ d.label }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -97,17 +135,56 @@
             </h3>
           </div>
         </template>
-        <div class="h-40 flex items-end gap-2">
-          <div v-for="(d, i) in salesByDay" :key="i" class="flex-1">
-            <div class="h-full flex items-end">
-              <div
-                :style="{ height: (d.total / maxSales) * 100 + '%' }"
-                class="w-full bg-green-500 rounded-t hover:bg-green-600 transition cursor-pointer"
-                :title="`${d.label}: ₦${d.total}`"
-              ></div>
+        <div class="h-80 flex flex-col">
+          <!-- Y-axis labels and bars -->
+          <div class="flex-1 flex">
+            <!-- Y-axis -->
+            <div
+              class="w-12 flex flex-col justify-between text-xs text-gray-500 pr-2 text-right"
+            >
+              <span>₦{{ formatAmount(maxSales) }}</span>
+              <span>₦{{ formatAmount(Math.floor(maxSales / 2)) }}</span>
+              <span>₦0</span>
             </div>
-            <div class="text-xs text-center text-gray-600 mt-2 font-semibold">
-              {{ d.label }}
+            <!-- Bars -->
+            <div
+              class="flex-1 flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
+            >
+              <div
+                v-for="(d, i) in salesByDay"
+                :key="i"
+                class="flex-1 flex flex-col items-center justify-end"
+              >
+                <div
+                  :style="{
+                    height:
+                      d.total === 0 ? '2px' : `${(d.total / maxSales) * 100}%`,
+                  }"
+                  class="w-full bg-green-500 hover:bg-green-600 transition cursor-pointer shadow-sm rounded-t relative group"
+                  :title="`${d.label}: ₦${d.total.toLocaleString()}`"
+                >
+                  <div
+                    v-if="d.total > 0"
+                    class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700 opacity-0 group-hover:opacity-100 transition whitespace-nowrap"
+                  >
+                    ₦{{ d.total.toLocaleString() }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- X-axis labels -->
+          <div class="flex ml-12 mt-1">
+            <div class="flex-1 flex gap-3 pl-2">
+              <div
+                v-for="(d, i) in salesByDay"
+                :key="i"
+                class="flex-1 text-center"
+              >
+                <div class="text-xs text-gray-600 font-medium">
+                  {{ d.label }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -293,4 +370,10 @@ const maxOrders = computed(() =>
 const maxSales = computed(() =>
   Math.max(1, ...salesByDay.value.map((d) => d.total))
 );
+
+const formatAmount = (num) => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+  return num.toString();
+};
 </script>

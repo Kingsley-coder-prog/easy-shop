@@ -40,12 +40,15 @@ export const useCartStore = defineStore("cart", {
         image: product.image,
       };
 
+      // Get quantity from product if specified, otherwise default to 1
+      const quantityToAdd = product.quantity || 1;
+
       if (existing) {
-        existing.quantity++;
+        existing.quantity += quantityToAdd;
       } else {
         this.items.push({
           ...normalizedProduct,
-          quantity: 1,
+          quantity: quantityToAdd,
         });
       }
 

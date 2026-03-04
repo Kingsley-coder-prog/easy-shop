@@ -40,17 +40,45 @@
       </div>
 
       <!-- Price and Action -->
-      <div class="flex items-center justify-between mt-auto">
-        <span class="text-blue-600 font-bold text-lg">
-          ₦{{ formatPrice(product.price_naira) }}
-        </span>
+      <div class="mt-auto">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-blue-600 font-bold text-lg">
+            ₦{{ formatPrice(product.price_naira) }}
+          </span>
+        </div>
 
-        <button
-          @click="handleAddToCart"
-          class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition cursor-pointer text-sm font-medium"
-        >
-          Add to Cart
-        </button>
+        <!-- Quantity Selector and Add Button -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center border rounded">
+            <button
+              @click="decrementQuantity"
+              class="px-3 py-1 hover:bg-gray-100 transition text-gray-600"
+              :disabled="quantity <= 1"
+            >
+              −
+            </button>
+            <input
+              v-model.number="quantity"
+              type="number"
+              min="1"
+              class="w-12 text-center border-x py-1 focus:outline-none"
+              @input="validateQuantity"
+            />
+            <button
+              @click="incrementQuantity"
+              class="px-3 py-1 hover:bg-gray-100 transition text-gray-600"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            @click="handleAddToCart"
+            class="flex-1 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition cursor-pointer text-sm font-medium"
+          >
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -76,14 +104,41 @@ const props = defineProps({
 const emit = defineEmits(["add-to-cart"]);
 
 const imageError = ref(false);
+const quantity = ref(1);
 const fallbackImage = "https://via.placeholder.com/300x300?text=No+Image";
 
 const handleImageError = () => {
   imageError.value = true;
 };
 
+const incrementQuantity = () => {
+  quantity.value++;
+};
+
+const decrementQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--;
+  }
+};
+
+const validateQuantity = (event) => {
+  const value = parseInt(event.target.value);
+  if (isNaN(value) || value < 1) {
+    quantity.value = 1;
+  } else {
+    quantity.value = value;
+  }
+};
+
 const handleAddToCart = () => {
-  emit("add-to-cart", props.product);
+  // Create a copy of the product with the selected quantity
+  const productWithQuantity = {
+    ...props.product,
+    quantity: quantity.value,
+  };
+  emit("add-to-cart", productWithQuantity);
+  // Reset quantity after adding
+  quantity.value = 1;
 };
 
 const formatPrice = (price) => {

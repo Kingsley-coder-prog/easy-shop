@@ -35,8 +35,16 @@ export const useOrderStore = defineStore("orders", {
     },
 
     async updateOrder(orderId, data) {
-      await orderService.update(orderId, data);
-      await this.fetchOrders();
+      try {
+        console.log("📝 Updating order from store:", { orderId, data });
+        const res = await orderService.update(orderId, data);
+        console.log("✅ Order updated response:", res);
+        await this.fetchOrders();
+        console.log("✅ Orders refreshed");
+      } catch (err) {
+        console.error("❌ Error updating order:", err);
+        throw err;
+      }
     },
   },
 });
