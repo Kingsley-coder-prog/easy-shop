@@ -1,9 +1,17 @@
 <template>
   <div
-    class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden h-full flex flex-col"
+    :class="[
+      'bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden h-full flex flex-col',
+      { 'text-sm': compact },
+    ]"
   >
     <!-- Image Container -->
-    <div class="relative w-full h-48 bg-gray-200 overflow-hidden">
+    <div
+      :class="[
+        'relative w-full bg-gray-200 overflow-hidden',
+        compact ? 'h-32' : 'h-48',
+      ]"
+    >
       <img
         :src="product.image || fallbackImage"
         :alt="product.name"
@@ -14,41 +22,64 @@
         v-if="imageError"
         class="absolute inset-0 flex items-center justify-center bg-gray-300"
       >
-        <span class="text-gray-500 text-sm">Image not available</span>
+        <span class="text-gray-500 text-xs">Image not available</span>
       </div>
     </div>
 
     <!-- Content -->
-    <div class="p-4 flex flex-col flex-grow">
+    <div :class="['flex flex-col flex-grow', compact ? 'p-2' : 'p-4']">
       <!-- Product Name -->
-      <h2 class="font-semibold text-lg mb-1 line-clamp-2">
+      <h2
+        :class="[
+          'font-semibold mb-1 line-clamp-2',
+          compact ? 'text-xs' : 'text-lg',
+        ]"
+      >
         {{ product.name }}
       </h2>
 
-      <!-- Description -->
-      <p class="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow">
+      <!-- Description (hide in compact mode) -->
+      <p
+        v-if="!compact"
+        class="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow"
+      >
         {{ product.description }}
       </p>
 
       <!-- Category Badge -->
-      <div class="mb-3">
+      <div :class="compact ? 'mb-1' : 'mb-3'">
         <span
-          class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+          :class="[
+            'inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded',
+            compact ? 'text-[10px]' : 'text-xs',
+          ]"
         >
           {{ product.category }}
         </span>
       </div>
 
-      <!-- Price and Action -->
+      <!-- Price -->
       <div class="mt-auto">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-blue-600 font-bold text-lg">
-            ₦{{ formatPrice(product.price_naira) }}
-          </span>
-        </div>
+        <span
+          :class="[
+            'text-blue-600 font-bold block mb-2',
+            compact ? 'text-sm' : 'text-lg',
+          ]"
+        >
+          ₦{{ formatPrice(product.price_naira) }}
+        </span>
 
-        <!-- Quantity Selector and Add Button -->
-        <div class="flex items-center gap-2">
+        <!-- Compact Mode: Simple Add Button -->
+        <button
+          v-if="compact"
+          @click="handleQuickAdd"
+          class="w-full bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition text-xs"
+        >
+          Add to Cart
+        </button>
+
+        <!-- Full Mode: Quantity Selector -->
+        <div v-else class="flex items-center gap-2">
           <div class="flex items-center border rounded">
             <button
               @click="decrementQuantity"
@@ -99,6 +130,10 @@ const props = defineProps({
       category: "",
     }),
   },
+  compact: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["add-to-cart"]);
@@ -128,6 +163,15 @@ const validateQuantity = (event) => {
   } else {
     quantity.value = value;
   }
+};
+
+const handleQuickAdd = () => {
+  // Quick add with quantity of 1 for compact cards
+  const productWithQuantity = {
+    ...props.product,
+    quantity: 1,
+  };
+  emit("add-to-cart", productWithQuantity);
 };
 
 const handleAddToCart = () => {

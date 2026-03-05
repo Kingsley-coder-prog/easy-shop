@@ -42,11 +42,71 @@
     <!-- Top Products -->
     <BaseCard>
       <template #header>
-        <div class="flex items-center gap-2">
-          <ShoppingBagIcon class="w-5 h-5 text-green-600" />
-          <h3 class="text-lg font-semibold text-gray-900">
-            Top Selling Products
-          </h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <ShoppingBagIcon class="w-5 h-5 text-green-600" />
+            <h3 class="text-lg font-semibold text-gray-900">
+              Top Selling Products
+            </h3>
+          </div>
+          <!-- Pagination Controls for Top Products -->
+          <div
+            v-if="paginatedTopProducts.length > 0"
+            class="flex items-center gap-2"
+          >
+            <span class="text-sm text-gray-600">
+              {{ topProductsPage }} / {{ topProductsTotalPages }}
+            </span>
+            <button
+              @click="prevTopProductsPage"
+              :disabled="topProductsPage === 1"
+              :class="{
+                'opacity-50 cursor-not-allowed': topProductsPage === 1,
+                'hover:bg-gray-200': topProductsPage !== 1,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Previous page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              @click="nextTopProductsPage"
+              :disabled="topProductsPage === topProductsTotalPages"
+              :class="{
+                'opacity-50 cursor-not-allowed':
+                  topProductsPage === topProductsTotalPages,
+                'hover:bg-gray-200': topProductsPage !== topProductsTotalPages,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Next page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </template>
       <div class="overflow-x-auto">
@@ -77,7 +137,7 @@
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr
-              v-for="(product, idx) in topProducts"
+              v-for="(product, idx) in paginatedTopProducts"
               :key="idx"
               class="hover:bg-gray-50"
             >
@@ -103,9 +163,70 @@
     <!-- Recent Orders -->
     <BaseCard>
       <template #header>
-        <div class="flex items-center gap-2">
-          <DocumentChartBarIcon class="w-5 h-5 text-orange-600" />
-          <h3 class="text-lg font-semibold text-gray-900">Recent Orders</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <DocumentChartBarIcon class="w-5 h-5 text-orange-600" />
+            <h3 class="text-lg font-semibold text-gray-900">Recent Orders</h3>
+          </div>
+          <!-- Pagination Controls for Recent Orders -->
+          <div
+            v-if="paginatedRecentOrders.length > 0"
+            class="flex items-center gap-2"
+          >
+            <span class="text-sm text-gray-600">
+              {{ recentOrdersPage }} / {{ recentOrdersTotalPages }}
+            </span>
+            <button
+              @click="prevRecentOrdersPage"
+              :disabled="recentOrdersPage === 1"
+              :class="{
+                'opacity-50 cursor-not-allowed': recentOrdersPage === 1,
+                'hover:bg-gray-200': recentOrdersPage !== 1,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Previous page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              @click="nextRecentOrdersPage"
+              :disabled="recentOrdersPage === recentOrdersTotalPages"
+              :class="{
+                'opacity-50 cursor-not-allowed':
+                  recentOrdersPage === recentOrdersTotalPages,
+                'hover:bg-gray-200':
+                  recentOrdersPage !== recentOrdersTotalPages,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Next page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </template>
       <div class="overflow-x-auto">
@@ -141,7 +262,7 @@
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr
-              v-for="order in recentOrders"
+              v-for="order in paginatedRecentOrders"
               :key="order.order_id"
               class="hover:bg-gray-50"
             >
@@ -210,7 +331,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useProductStore } from "@/stores/product.store";
 import { useOrderStore } from "@/stores/order.store";
 import { useUserStore } from "@/stores/user.store";
@@ -226,6 +347,12 @@ import {
 const productStore = useProductStore();
 const orderStore = useOrderStore();
 const userStore = useUserStore();
+
+// Pagination state
+const topProductsPage = ref(1);
+const topProductsPerPage = 10;
+const recentOrdersPage = ref(1);
+const recentOrdersPerPage = 10;
 
 onMounted(async () => {
   await Promise.all([
@@ -294,16 +421,60 @@ const topProducts = computed(() => {
     });
   });
 
-  return Object.values(productSales)
-    .sort((a, b) => b.orders - a.orders)
-    .slice(0, 10);
+  return Object.values(productSales).sort((a, b) => b.orders - a.orders);
 });
 
-const recentOrders = computed(() => {
-  return orderStore.orders
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 10);
+// Pagination for Top Products
+const topProductsTotalPages = computed(() =>
+  Math.ceil(topProducts.value.length / topProductsPerPage)
+);
+
+const paginatedTopProducts = computed(() => {
+  const start = (topProductsPage.value - 1) * topProductsPerPage;
+  const end = start + topProductsPerPage;
+  return topProducts.value.slice(start, end);
 });
+
+const nextTopProductsPage = () => {
+  if (topProductsPage.value < topProductsTotalPages.value) {
+    topProductsPage.value++;
+  }
+};
+
+const prevTopProductsPage = () => {
+  if (topProductsPage.value > 1) {
+    topProductsPage.value--;
+  }
+};
+
+const recentOrders = computed(() => {
+  return orderStore.orders.sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+});
+
+// Pagination for Recent Orders
+const recentOrdersTotalPages = computed(() =>
+  Math.ceil(recentOrders.value.length / recentOrdersPerPage)
+);
+
+const paginatedRecentOrders = computed(() => {
+  const start = (recentOrdersPage.value - 1) * recentOrdersPerPage;
+  const end = start + recentOrdersPerPage;
+  return recentOrders.value.slice(start, end);
+});
+
+const nextRecentOrdersPage = () => {
+  if (recentOrdersPage.value < recentOrdersTotalPages.value) {
+    recentOrdersPage.value++;
+  }
+};
+
+const prevRecentOrdersPage = () => {
+  if (recentOrdersPage.value > 1) {
+    recentOrdersPage.value--;
+  }
+};
 
 const totalCustomers = computed(() => userStore.users.length);
 

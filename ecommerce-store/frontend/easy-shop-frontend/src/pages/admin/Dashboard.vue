@@ -196,9 +196,68 @@
     <!-- Recent Orders Table -->
     <BaseCard>
       <template #header>
-        <div class="flex items-center gap-2">
-          <ClipboardDocumentListIcon class="w-5 h-5 text-blue-600" />
-          <h3 class="text-lg font-semibold text-gray-900">Recent Orders</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <ClipboardDocumentListIcon class="w-5 h-5 text-blue-600" />
+            <h3 class="text-lg font-semibold text-gray-900">Recent Orders</h3>
+          </div>
+          <!-- Pagination Controls -->
+          <div
+            v-if="paginatedOrders.length > 0"
+            class="flex items-center gap-2"
+          >
+            <span class="text-sm text-gray-600">
+              {{ currentPage }} / {{ totalPages }}
+            </span>
+            <button
+              @click="prevPage"
+              :disabled="currentPage === 1"
+              :class="{
+                'opacity-50 cursor-not-allowed': currentPage === 1,
+                'hover:bg-gray-200': currentPage !== 1,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Previous page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              @click="nextPage"
+              :disabled="currentPage === totalPages"
+              :class="{
+                'opacity-50 cursor-not-allowed': currentPage === totalPages,
+                'hover:bg-gray-200': currentPage !== totalPages,
+              }"
+              class="p-2 rounded-lg transition"
+              title="Next page"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </template>
       <div v-if="orderStore.loading" class="text-center py-10">
@@ -224,7 +283,7 @@
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr
-              v-for="o in recentOrders"
+              v-for="o in paginatedOrders"
               :key="o.order_id"
               class="hover:bg-gray-50 transition"
             >
@@ -283,7 +342,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useProductStore } from "@/stores/product.store";
 import { useOrderStore } from "@/stores/order.store";
 import { useUserStore } from "@/stores/user.store";
@@ -300,6 +359,10 @@ import {
 const productStore = useProductStore();
 const orderStore = useOrderStore();
 const userStore = useUserStore();
+
+// Pagination state
+const currentPage = ref(1);
+const itemsPerPage = 8;
 
 onMounted(async () => {
   await Promise.all([
@@ -319,7 +382,30 @@ const totalSales = computed(() => {
   }, 0);
 });
 
-const recentOrders = computed(() => (orderStore.orders || []).slice(0, 8));
+const recentOrders = computed(() => orderStore.orders || []);
+
+// Pagination computed properties
+const totalPages = computed(() =>
+  Math.ceil(recentOrders.value.length / itemsPerPage)
+);
+
+const paginatedOrders = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return recentOrders.value.slice(start, end);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
 
 // Helpers for charts - last 7 days
 function formatLabel(date) {
