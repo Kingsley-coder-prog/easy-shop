@@ -94,7 +94,9 @@
                 <div
                   :style="{
                     height:
-                      d.count === 0 ? '2px' : `${(d.count / maxOrders) * 100}%`,
+                      d.count === 0
+                        ? '80px'
+                        : `${(d.count / maxOrders) * 100}%`,
                   }"
                   class="w-full bg-blue-500 hover:bg-blue-600 transition cursor-pointer shadow-sm rounded-t relative group"
                   :title="`${d.label}: ${d.count} orders`"
@@ -158,7 +160,7 @@
                 <div
                   :style="{
                     height:
-                      d.total === 0 ? '2px' : `${(d.total / maxSales) * 100}%`,
+                      d.total === 0 ? '80px' : `${(d.total / maxSales) * 100}%`,
                   }"
                   class="w-full bg-green-500 hover:bg-green-600 transition cursor-pointer shadow-sm rounded-t relative group"
                   :title="`${d.label}: ₦${d.total.toLocaleString()}`"
