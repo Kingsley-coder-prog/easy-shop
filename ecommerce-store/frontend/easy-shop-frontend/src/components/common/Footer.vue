@@ -134,24 +134,126 @@
         <h3 class="font-bold text-sm mb-4">PAYMENT METHODS & PARTNERS</h3>
         <div class="flex flex-wrap gap-4 items-center">
           <div
-            class="bg-white rounded px-3 py-2 text-gray-900 font-bold text-xs"
+            v-for="method in paymentMethods"
+            :key="method.name"
+            class="bg-white rounded-lg px-4 py-2 h-12 min-w-32 flex items-center justify-center"
           >
-            PAYSTACK
-          </div>
-          <div
-            class="bg-white rounded px-3 py-2 text-gray-900 font-bold text-xs"
-          >
-            VISA
-          </div>
-          <div
-            class="bg-white rounded px-3 py-2 text-gray-900 font-bold text-xs"
-          >
-            MASTERCARD
-          </div>
-          <div
-            class="bg-white rounded px-3 py-2 text-gray-900 font-bold text-xs"
-          >
-            VERVE
+            <!-- Paystack icon -->
+            <div
+              v-if="method.type === 'paystack'"
+              class="flex items-center gap-2 cursor-pointer"
+              :aria-label="method.name"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="6" height="14" rx="2" fill="#00C38E" />
+                <rect
+                  x="10"
+                  y="5"
+                  width="6"
+                  height="11"
+                  rx="2"
+                  fill="#0AA06E"
+                />
+              </svg>
+              <span class="text-[#0a66a0] font-extrabold text-xs tracking-wide"
+                >PAYSTACK</span
+              >
+            </div>
+
+            <!-- Visa icon -->
+            <div
+              v-else-if="method.type === 'visa'"
+              class="flex items-center cursor-pointer"
+              :aria-label="method.name"
+            >
+              <svg width="72" height="24" viewBox="0 0 72 24" fill="none">
+                <path
+                  d="M24 5L18 19H14L10.8 8.3C10.6 7.6 10.4 7.3 9.9 7L7 5.6L7.1 5H13.6C14.4 5 15 5.5 15.2 6.4L16.9 14.7L21.1 5H24Z"
+                  fill="#1434CB"
+                />
+                <path
+                  d="M31.1 5C29.1 5 27.7 6.1 27.7 7.7C27.7 8.9 28.8 9.5 29.6 9.9C30.5 10.3 30.8 10.6 30.8 11C30.8 11.6 30.1 11.9 29.4 11.9C28.4 11.9 27.8 11.8 26.8 11.3L26.4 11.1L26 13.6C26.6 13.9 27.8 14.2 29.1 14.2C31.2 14.2 32.6 13.2 32.6 11.5C32.6 10.5 32 9.8 30.6 9.2C29.8 8.8 29.3 8.6 29.3 8.2C29.3 7.9 29.7 7.5 30.6 7.5C31.3 7.5 31.8 7.6 32.2 7.8L32.5 7.9L32.9 5.5C32.4 5.3 31.7 5 31.1 5Z"
+                  fill="#1434CB"
+                />
+                <path
+                  d="M40.6 5H38.6C38 5 37.6 5.2 37.4 5.8L33.8 14H36.3L36.8 12.6H39.9L40.2 14H42.5L40.6 5ZM37.4 10.8L38.7 7.3L39.4 10.8H37.4Z"
+                  fill="#1434CB"
+                />
+                <path d="M45.7 5L43.8 14H46.2L48.1 5H45.7Z" fill="#1434CB" />
+                <rect x="3" y="17" width="16" height="2" fill="#F7B600" />
+              </svg>
+            </div>
+
+            <!-- Mastercard icon -->
+            <div
+              v-else-if="method.type === 'mastercard'"
+              class="flex items-center gap-2 cursor-pointer"
+              :aria-label="method.name"
+            >
+              <svg width="34" height="20" viewBox="0 0 34 20" fill="none">
+                <circle cx="13" cy="10" r="8" fill="#EB001B" />
+                <circle
+                  cx="21"
+                  cy="10"
+                  r="8"
+                  fill="#F79E1B"
+                  fill-opacity="0.92"
+                />
+                <rect x="13" y="3" width="8" height="14" fill="#FF5F00" />
+              </svg>
+              <span class="text-[#1A1F71] font-extrabold text-xs tracking-wide"
+                >mastercard</span
+              >
+            </div>
+
+            <!-- Verve icon -->
+            <div
+              v-else
+              class="flex items-center cursor-pointer"
+              :aria-label="method.name"
+            >
+              <svg width="74" height="24" viewBox="0 0 74 24" fill="none">
+                <rect
+                  x="1"
+                  y="2"
+                  width="72"
+                  height="20"
+                  rx="10"
+                  fill="url(#verveGradient)"
+                />
+                <path
+                  d="M18 8.5L14.6 15H12.7L10 8.5H12L13.6 12.8L15.8 8.5H18Z"
+                  fill="white"
+                />
+                <path
+                  d="M19.6 8.5H24.8V10H21.4V10.9H24.4V12.3H21.4V13.4H24.9V15H19.6V8.5Z"
+                  fill="white"
+                />
+                <path
+                  d="M32.2 15L30.6 12.7H29.7V15H27.9V8.5H31.1C33 8.5 34 9.4 34 10.7C34 11.6 33.5 12.2 32.6 12.5L34.3 15H32.2ZM31 10H29.7V11.3H31C31.7 11.3 32.1 11.1 32.1 10.6C32.1 10.2 31.7 10 31 10Z"
+                  fill="white"
+                />
+                <path d="M35.5 8.5H37.3V13.4H40.4V15H35.5V8.5Z" fill="white" />
+                <path
+                  d="M41.7 8.5H46.9V10H43.5V10.9H46.5V12.3H43.5V13.4H47V15H41.7V8.5Z"
+                  fill="white"
+                />
+                <defs>
+                  <linearGradient
+                    id="verveGradient"
+                    x1="1"
+                    y1="12"
+                    x2="73"
+                    y2="12"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stop-color="#1FA74A" />
+                    <stop offset="0.5" stop-color="#0A7BD8" />
+                    <stop offset="1" stop-color="#D6252D" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -170,6 +272,25 @@
 import { computed } from "vue";
 
 const currentYear = computed(() => new Date().getFullYear());
+
+const paymentMethods = [
+  {
+    name: "PAYSTACK",
+    type: "paystack",
+  },
+  {
+    name: "VISA",
+    type: "visa",
+  },
+  {
+    name: "MASTERCARD",
+    type: "mastercard",
+  },
+  {
+    name: "VERVE",
+    type: "verve",
+  },
+];
 </script>
 
 <style scoped>

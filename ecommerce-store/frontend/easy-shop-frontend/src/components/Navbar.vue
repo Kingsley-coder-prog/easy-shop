@@ -1,5 +1,7 @@
 <template>
-  <nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
+  <nav
+    class="bg-white shadow px-6 py-4 flex justify-between items-center sticky top-0 z-50"
+  >
     <RouterLink to="/products" class="font-bold text-xl"> EasyShop </RouterLink>
 
     <div class="flex items-center gap-4">

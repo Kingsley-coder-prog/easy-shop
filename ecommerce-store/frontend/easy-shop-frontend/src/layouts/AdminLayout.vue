@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex bg-gray-100">
+  <div class="flex flex-col min-h-screen bg-gray-100">
     <!-- Mobile Drawer & Backdrop -->
     <div
       v-if="isSidebarOpen"
@@ -249,9 +249,12 @@
         </div>
       </header>
 
-      <main class="flex-1 p-6 overflow-auto">
+      <main class="flex-1 p-6 overflow-auto bg-gray-100">
         <RouterView />
       </main>
+
+      <!-- Footer positioned at bottom -->
+      <Footer class="mt-auto" />
     </div>
   </div>
 </template>
@@ -259,6 +262,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import Footer from "@/components/common/Footer.vue";
 import {
   SquaresPlusIcon,
   ShoppingBagIcon,
