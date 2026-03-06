@@ -108,7 +108,7 @@
           <div v-else-if="filteredProducts.length > 0">
             <!-- All Products / Filtered Results -->
             <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">
+              <h2 class="text-xl font-bold text-blue-400 mb-4">
                 {{
                   selectedCategory
                     ? `${selectedCategory} Products`

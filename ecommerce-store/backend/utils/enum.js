@@ -2,7 +2,7 @@ const PRODUCT_CATEGORIES = [
   "Food",
   "Snacks",
   "Drinks",
-  "Farm Products",
+  "Farm Items",
   "Hygiene",
   "Books",
   "Clothing",

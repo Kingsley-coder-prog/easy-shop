@@ -2,18 +2,24 @@
   <nav
     class="bg-white shadow px-6 py-4 flex justify-between items-center sticky top-0 z-50"
   >
-    <RouterLink to="/products" class="font-bold text-xl"> EasyShop </RouterLink>
+    <RouterLink to="/products" class="font-bold text-xl text-blue-600">
+      EasyShop
+    </RouterLink>
 
     <div class="flex items-center gap-4">
       <!-- Normal users - hide on login/register pages -->
-      <RouterLink v-if="!isAuthPage" to="/products">Products</RouterLink>
-      <RouterLink v-if="!isAuthPage" to="/cart">Cart</RouterLink>
+      <RouterLink v-if="!isAuthPage" to="/products" class="text-blue-600"
+        >Products</RouterLink
+      >
+      <RouterLink v-if="!isAuthPage" to="/cart" class="text-blue-600"
+        >Cart</RouterLink
+      >
 
       <!-- 🔐 ADMIN ONLY -->
       <RouterLink
         v-if="authStore.isAdmin"
         to="/admin/products"
-        class="text-red-600 font-medium"
+        class="text-gray-900 font-medium"
       >
         Admin
       </RouterLink>
@@ -22,7 +28,7 @@
       <button
         v-if="authStore.isAuthenticated"
         @click="logout"
-        class="text-gray-600"
+        class="text-gray-600 cursor-pointer hover:text-gray-900 transition font-medium"
       >
         Logout
       </button>
