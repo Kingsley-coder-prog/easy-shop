@@ -2,8 +2,8 @@
   <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-6xl mx-auto px-6">
       <div class="flex items-center gap-2 mb-8">
-        <ShoppingCartIcon class="w-8 h-8 text-blue-600" />
-        <h1 class="text-3xl font-bold text-gray-800">Shopping Cart</h1>
+        <ShoppingCartIcon class="w-8 h-8 text-green-600" />
+        <h1 class="text-3xl font-bold text-gray-900">Shopping Cart</h1>
       </div>
 
       <!-- Empty State -->

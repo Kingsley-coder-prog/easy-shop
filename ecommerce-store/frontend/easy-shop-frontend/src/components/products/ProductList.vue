@@ -111,7 +111,7 @@
               <h2 class="text-xl font-bold text-blue-400 mb-4">
                 {{
                   selectedCategory
-                    ? `${selectedCategory} Products`
+                    ? `${selectedCategory}`
                     : searchQuery
                     ? "Search Results"
                     : "All Products"

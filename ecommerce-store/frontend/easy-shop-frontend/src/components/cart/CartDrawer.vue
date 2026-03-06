@@ -3,7 +3,7 @@
     <div v-if="isOpen" class="fixed inset-0 z-50 flex">
       <!-- Overlay with blur -->
       <div
-        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+        class="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-sm"
         @click="close"
       ></div>
 
