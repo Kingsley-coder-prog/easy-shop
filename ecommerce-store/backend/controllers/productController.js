@@ -8,9 +8,34 @@ const {
 } = require("../models/productsSheet");
 const { getPresignedUploadUrl } = require("../services/s3");
 
+const PRODUCTS_CACHE_TTL_MS = 60 * 1000;
+const productsCache = new Map();
+
+const getCacheEntry = (key) => {
+  const entry = productsCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt > PRODUCTS_CACHE_TTL_MS) {
+    productsCache.delete(key);
+    return null;
+  }
+  return entry.data;
+};
+
+const setCacheEntry = (key, data) => {
+  productsCache.set(key, {
+    data,
+    cachedAt: Date.now(),
+  });
+};
+
+const invalidateProductsCache = () => {
+  productsCache.clear();
+};
+
 const createProduct = async (req, res) => {
   try {
     const result = await createProductService(req.body);
+    invalidateProductsCache();
     return res.status(StatusCodes.CREATED).json(result);
   } catch (error) {
     console.error(error);
@@ -19,7 +44,16 @@ const createProduct = async (req, res) => {
 };
 const getProducts = async (req, res) => {
   try {
+    const cacheKey = "all-products";
+    const cachedProducts = getCacheEntry(cacheKey);
+    if (cachedProducts) {
+      res.set("Cache-Control", "public, max-age=60");
+      return res.status(StatusCodes.OK).json({ products: cachedProducts });
+    }
+
     const products = await getProductsService();
+    setCacheEntry(cacheKey, products);
+    res.set("Cache-Control", "public, max-age=60");
     return res.status(StatusCodes.OK).json({ products });
   } catch (error) {
     console.error(error);
@@ -29,13 +63,23 @@ const getProducts = async (req, res) => {
 
 const getProductByCategory = async (req, res) => {
   const category = req.params.category;
+  const cacheKey = `category:${category}`;
+  const cachedProducts = getCacheEntry(cacheKey);
+  if (cachedProducts) {
+    res.set("Cache-Control", "public, max-age=60");
+    return res.json(cachedProducts);
+  }
+
   const products = await getProductsService(category);
+  setCacheEntry(cacheKey, products);
+  res.set("Cache-Control", "public, max-age=60");
   res.json(products);
 };
 
 const updateProduct = async (req, res) => {
   try {
     const result = await updateProductService(req.params.product_id, req.body);
+    if (!result.error) invalidateProductsCache();
     if (result.error) return res.status(StatusCodes.NOT_FOUND).json(result);
     return res.status(StatusCodes.OK).json(result);
   } catch (error) {
@@ -45,6 +89,7 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const result = await deleteProductService(req.params.product_id);
+    if (!result.error) invalidateProductsCache();
     if (result.error) return res.status(StatusCodes.NOT_FOUND).json(result);
     return res.status(StatusCodes.OK).json(result);
   } catch (error) {
