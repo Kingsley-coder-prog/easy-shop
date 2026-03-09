@@ -35,17 +35,39 @@ export const useProductStore = defineStore("products", {
     products: [],
     loading: false,
     error: null,
+    lastFetchedAt: null,
   }),
 
   actions: {
-    async fetchProducts() {
+    async fetchProducts(force = false) {
+      const CACHE_TTL_MS = 5 * 60 * 1000;
+      const now = Date.now();
+
+      if (!force && this.products.length && this.lastFetchedAt) {
+        if (now - this.lastFetchedAt < CACHE_TTL_MS) {
+          return;
+        }
+      }
+
+      if (!force && !this.products.length) {
+        try {
+          const cached = localStorage.getItem("easyshop_products_cache");
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed.products) && parsed.products.length) {
+              this.products = parsed.products;
+              this.lastFetchedAt = parsed.lastFetchedAt || null;
+            }
+          }
+        } catch {
+          // ignore cache parse errors
+        }
+      }
+
       this.loading = true;
       this.error = null;
       try {
-        console.log("📡 Making API request to /products...");
-        // const response = await api.get("/products");
         const response = await productService.getAll();
-        console.log("📦 API Response:", response);
 
         // Normalize backend product shape to UI-friendly shape
         const raw = response.data.products || response.data || [];
@@ -64,8 +86,14 @@ export const useProductStore = defineStore("products", {
           __raw: p,
         }));
 
-        console.log("✅ Products set:", this.products);
-        console.log("✅ Products count:", this.products.length);
+        this.lastFetchedAt = Date.now();
+        localStorage.setItem(
+          "easyshop_products_cache",
+          JSON.stringify({
+            products: this.products,
+            lastFetchedAt: this.lastFetchedAt,
+          }),
+        );
       } catch (err) {
         console.error(err);
         this.error = "Failed to load products";

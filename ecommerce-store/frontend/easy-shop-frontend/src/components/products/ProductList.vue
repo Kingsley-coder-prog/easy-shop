@@ -172,7 +172,7 @@ const carouselImages = ref([
 let carouselInterval;
 
 onMounted(async () => {
-  await productStore.fetchProducts();
+  await productStore.fetchProducts(false);
   startCarousel();
 });
 

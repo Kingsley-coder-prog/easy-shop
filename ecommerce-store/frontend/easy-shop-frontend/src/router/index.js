@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 
-import Login from "@/pages/auth/Login.vue";
-import Register from "@/pages/auth/Register.vue";
-import Products from "@/pages/products/Products.vue";
-import Cart from "@/pages/cart/Cart.vue";
-import Checkout from "@/pages/checkout/Checkout.vue";
-import OrderConfirmation from "@/pages/orders/OrderConfirmation.vue";
-import AdminLayout from "@/layouts/AdminLayout.vue";
-import AdminDashboard from "@/pages/admin/Dashboard.vue";
-import AdminProducts from "@/pages/admin/Products.vue";
-import AdminOrders from "@/pages/admin/Orders.vue";
-import AdminUsers from "@/pages/admin/Users.vue";
-import AdminAnalytics from "@/pages/admin/Analytics.vue";
-import AdminReports from "@/pages/admin/Reports.vue";
-import AdminSettings from "@/pages/admin/Settings.vue";
+const Login = () => import("@/pages/auth/Login.vue");
+const Register = () => import("@/pages/auth/Register.vue");
+const Products = () => import("@/pages/products/Products.vue");
+const Cart = () => import("@/pages/cart/Cart.vue");
+const Checkout = () => import("@/pages/checkout/Checkout.vue");
+const OrderConfirmation = () => import("@/pages/orders/OrderConfirmation.vue");
+const AdminLayout = () => import("@/layouts/AdminLayout.vue");
+const AdminDashboard = () => import("@/pages/admin/Dashboard.vue");
+const AdminProducts = () => import("@/pages/admin/Products.vue");
+const AdminOrders = () => import("@/pages/admin/Orders.vue");
+const AdminUsers = () => import("@/pages/admin/Users.vue");
+const AdminAnalytics = () => import("@/pages/admin/Analytics.vue");
+const AdminReports = () => import("@/pages/admin/Reports.vue");
+const AdminSettings = () => import("@/pages/admin/Settings.vue");
 
 const routes = [
   { path: "/", redirect: "/login" },

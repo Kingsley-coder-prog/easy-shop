@@ -16,6 +16,9 @@
         :src="product.image || fallbackImage"
         :alt="product.name"
         class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
         @error="handleImageError"
       />
       <div
@@ -27,7 +30,7 @@
     </div>
 
     <!-- Content -->
-    <div :class="['flex flex-col flex-grow', compact ? 'p-2' : 'p-4']">
+    <div :class="['flex flex-col grow', compact ? 'p-2' : 'p-4']">
       <!-- Product Name -->
       <h2
         :class="[
@@ -39,10 +42,7 @@
       </h2>
 
       <!-- Description (hide in compact mode) -->
-      <p
-        v-if="!compact"
-        class="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow"
-      >
+      <p v-if="!compact" class="text-gray-500 text-sm mb-3 line-clamp-2 grow">
         {{ product.description }}
       </p>
 
