@@ -10,7 +10,7 @@
           </div>
         </div>
 
-        <h2 class="text-2xl font-semibold mb-4 text-center">
+        <h2 class="text-2xl font-semibold mb-4 text-center text-blue-600">
           Create your account
         </h2>
 

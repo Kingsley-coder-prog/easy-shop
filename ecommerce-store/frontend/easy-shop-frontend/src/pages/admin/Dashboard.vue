@@ -84,20 +84,27 @@
             </div>
             <!-- Bars -->
             <div
-              class="flex-1 flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
+              class="flex-1 relative flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
             >
+              <!-- Grid lines -->
+              <div class="absolute inset-0 pointer-events-none">
+                <div
+                  class="absolute left-0 right-0 top-0 border-t border-gray-200"
+                ></div>
+                <div
+                  class="absolute left-0 right-0 top-1/2 border-t border-gray-200"
+                ></div>
+                <div
+                  class="absolute left-0 right-0 bottom-0 border-t border-gray-200"
+                ></div>
+              </div>
               <div
                 v-for="(d, i) in ordersByDay"
                 :key="i"
-                class="flex-1 flex flex-col items-center justify-end"
+                class="flex-1 h-full self-stretch flex flex-col items-center justify-end relative z-10"
               >
                 <div
-                  :style="{
-                    height:
-                      d.count === 0
-                        ? '80px'
-                        : `${(d.count / maxOrders) * 100}%`,
-                  }"
+                  :style="{ height: getOrderBarHeight(d.count) }"
                   class="w-full bg-blue-500 hover:bg-blue-600 transition cursor-pointer shadow-sm rounded-t relative group"
                   :title="`${d.label}: ${d.count} orders`"
                 >
@@ -150,18 +157,27 @@
             </div>
             <!-- Bars -->
             <div
-              class="flex-1 flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
+              class="flex-1 relative flex items-end gap-3 border-l border-b border-gray-300 pb-2 pl-2"
             >
+              <!-- Grid lines -->
+              <div class="absolute inset-0 pointer-events-none">
+                <div
+                  class="absolute left-0 right-0 top-0 border-t border-gray-200"
+                ></div>
+                <div
+                  class="absolute left-0 right-0 top-1/2 border-t border-gray-200"
+                ></div>
+                <div
+                  class="absolute left-0 right-0 bottom-0 border-t border-gray-200"
+                ></div>
+              </div>
               <div
                 v-for="(d, i) in salesByDay"
                 :key="i"
-                class="flex-1 flex flex-col items-center justify-end"
+                class="flex-1 h-full self-stretch flex flex-col items-center justify-end relative z-10"
               >
                 <div
-                  :style="{
-                    height:
-                      d.total === 0 ? '80px' : `${(d.total / maxSales) * 100}%`,
-                  }"
+                  :style="{ height: getSalesBarHeight(d.total) }"
                   class="w-full bg-green-500 hover:bg-green-600 transition cursor-pointer shadow-sm rounded-t relative group"
                   :title="`${d.label}: ₦${d.total.toLocaleString()}`"
                 >
@@ -458,6 +474,18 @@ const maxOrders = computed(() =>
 const maxSales = computed(() =>
   Math.max(1, ...salesByDay.value.map((d) => d.total))
 );
+
+const getOrderBarHeight = (count) => {
+  if (!count) return "0%";
+  const ratio = (count / maxOrders.value) * 100;
+  return `${Math.max(ratio, 5)}%`;
+};
+
+const getSalesBarHeight = (total) => {
+  if (!total) return "0%";
+  const ratio = (total / maxSales.value) * 100;
+  return `${Math.max(ratio, 5)}%`;
+};
 
 const formatAmount = (num) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
