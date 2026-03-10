@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.6.1">
+  <diagram id="v2-prod-arch" name="ShopEazi V2 Production Architecture">
+    <mxGraphModel dx="1206" dy="491" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#000000" value="ShopEazi V2 - Production Architecture (Scalable)" vertex="1">
+          <mxGeometry height="40" width="900" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5ff;strokeColor=#01579b;strokeWidth=2;fontSize=12;fontStyle=1" value="👥 Users&#xa;Web / Mobile" vertex="1">
+          <mxGeometry height="70" width="180" x="450" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;fontSize=12;fontStyle=1" value="🌐 DNS + TLS&#xa;shopeazi.shop" vertex="1">
+          <mxGeometry height="70" width="180" x="100" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="cdn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;fontSize=12;fontStyle=1" value="⚡ CDN + WAF&#xa;(Cloudflare)" vertex="1">
+          <mxGeometry height="70" width="180" x="350" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="apigw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#4a148c;strokeWidth=2;fontSize=12;fontStyle=1" value="🚪 API Gateway&#xa;Rate limit + Routing" vertex="1">
+          <mxGeometry height="70" width="180" x="600" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#1b5e20;strokeWidth=2;fontSize=12;fontStyle=1" value="🎨 Frontend Hosting&#xa;Vue 3 + Vite" vertex="1">
+          <mxGeometry height="70" width="180" x="850" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="lb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;strokeWidth=2;fontSize=12;fontStyle=1" value="⚙️ Load Balancer" vertex="1">
+          <mxGeometry height="60" width="180" x="350" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#1b5e20;strokeWidth=2;fontSize=12;fontStyle=1" value="🔵 API Cluster (Node.js)&#xa;N replicas ⚡ Autoscaling&#xa;Products, Orders, Cart, Auth" vertex="1">
+          <mxGeometry height="100" width="240" x="600" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f8e9;strokeColor=#33691e;strokeWidth=2;fontSize=12;fontStyle=1" value="📦 Redis&#xa;Cache, Sessions&#xa;Idempotency, Rate limits" vertex="1">
+          <mxGeometry height="90" width="180" x="100" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="postgres" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;strokeWidth=2;fontSize=12;fontStyle=1" value="🗄️ PostgreSQL (Primary)&#xa;Orders, Users, Products" vertex="1">
+          <mxGeometry height="90" width="180" x="350" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="readreplica" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#f57f17;strokeWidth=2;fontSize=12;fontStyle=1" value="🔄 PostgreSQL Replica&#xa;Analytics, Admin" vertex="1">
+          <mxGeometry height="90" width="180" x="600" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#37474f;strokeWidth=2;fontSize=12;fontStyle=1" value="☁️ S3 Storage&#xa;Images, Media" vertex="1">
+          <mxGeometry height="90" width="180" x="850" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="queue" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#b71c1c;strokeWidth=2;fontSize=12;fontStyle=1" value="📬 Message Queue&#xa;(SQS/RabbitMQ)&#xa;Async jobs" vertex="1">
+          <mxGeometry height="90" width="180" x="100" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="workers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#1b5e20;strokeWidth=2;fontSize=12;fontStyle=1" value="⚙️ Workers&#xa;Email, Retries&#xa;Reconciliation" vertex="1">
+          <mxGeometry height="90" width="180" x="350" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="paystack" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;strokeWidth=2;fontSize=12;fontStyle=1" value="💳 Paystack&#xa;Payment Gateway" vertex="1">
+          <mxGeometry height="90" width="180" x="600" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="email" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eceff1;strokeColor=#37474f;strokeWidth=2;fontSize=12;fontStyle=1" value="📧 Email Service&#xa;(SES / SMTP)" vertex="1">
+          <mxGeometry height="90" width="180" x="850" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="ci" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2f1;strokeColor=#004d40;strokeWidth=2;fontSize=12;fontStyle=1" value="🔧 CI/CD Pipeline&#xa;GitHub Actions&#xa;Test → Build → Deploy" vertex="1">
+          <mxGeometry height="90" width="180" x="100" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="obs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2f1;strokeColor=#004d40;strokeWidth=2;fontSize=12;fontStyle=1" value="📊 Observability&#xa;Logs, Metrics, Traces&#xa;(Sentry + Prometheus)" vertex="1">
+          <mxGeometry height="90" width="180" x="350" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="users" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=light-dark(#333333,#E6D0DE);" target="dns" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="165" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="dns" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=light-dark(#333333,#E6D0DE);" target="apigw" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="265" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="cdn" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=light-dark(#333333,#B5739D);" target="apigw" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="apigw" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=light-dark(#333333,#E6D0DE);" target="frontend" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="frontend" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=light-dark(#333333,#E6D0DE);" target="lb" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="410" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge6" edge="1" parent="1" source="lb" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#333" target="api" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2196f3" target="redis" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="565" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge8" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2196f3" target="postgres" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="565" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge9" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#2196f3" target="s3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="565" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge10" edge="1" parent="1" source="postgres" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#666;dashed=1" target="readreplica" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge11" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d32f2f" target="queue" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="640" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge12" edge="1" parent="1" source="queue" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d32f2f" target="workers" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge13" edge="1" parent="1" source="workers" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d32f2f" target="email" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="745" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge14" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#ff6f00" target="paystack" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="650" y="640" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge15" edge="1" parent="1" source="paystack" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#ff6f00" target="queue" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="745" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge16" edge="1" parent="1" source="ci" style="endArrow=classic;html=1;strokeWidth=2;strokeColor:#00796b;dashed=1" target="api" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="500" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge17" edge="1" parent="1" source="ci" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#00796b;dashed=1" target="frontend" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="900" y="320" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge18" edge="1" parent="1" source="api" style="endArrow=classic;html=1;strokeWidth=2;strokeColor:#00796b;dashed=1" target="obs" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="945" as="wayPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge19" edge="1" parent="1" source="workers" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#00796b;dashed=1" target="obs" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f57f17;strokeWidth=2;fontSize=13;fontStyle=1" value="🔐 SECURITY &amp; RELIABILITY CONTROLS" vertex="1">
+          <mxGeometry height="40" width="930" x="100" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="note2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#f57f17;fontSize=11;align=left;verticalAlign=top" value="✓ Rate limiting at gateway + app level&#xa;✓ Redis-based webhook idempotency&#xa;✓ Async jobs for retries &amp; email&#xa;✓ DB backups + read replicas&#xa;✓ Payment webhook failure alerts" vertex="1">
+          <mxGeometry height="100" width="930" x="100" y="1095" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
