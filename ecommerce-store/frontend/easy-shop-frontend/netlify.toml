@@ -1,0 +1,11 @@
+[build]
+command = "npm run build"
+publish = "dist"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[context.production.environment]
+VITE_EASYSHOP_BASE_URL = "https://easy-shop-yvwm.onrender.com/api/v1"
