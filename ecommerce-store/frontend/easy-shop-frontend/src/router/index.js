@@ -37,7 +37,7 @@ const routes = [
   {
     path: "/order-success",
     component: OrderConfirmation,
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: true },
   },
   {
     path: "/admin",
