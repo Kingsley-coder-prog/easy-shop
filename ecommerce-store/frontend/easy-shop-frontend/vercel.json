@@ -2,7 +2,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "env": {
-    "VITE_EASYSHOP_BASE_URL": "@vite_easyshop_base_url"
+    "VITE_EASYSHOP_BASE_URL": "https://easy-shop-yvwm.onrender.com/api/v1"
   },
   "rewrites": [
     {
