@@ -1,0 +1,32 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND_PROD }}" ]; then
+            echo "Missing secret: RENDER_DEPLOY_HOOK_BACKEND_PROD"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_PROD }}" ]; then
+            echo "Missing secret: VERCEL_DEPLOY_HOOK_PROD"
+            exit 1
+          fi
+
+      - name: Trigger Render (Backend Production)
+        run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND_PROD }}"
+
+      - name: Trigger Vercel (Frontend Production)
+        run: curl -fsSL -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_PROD }}"

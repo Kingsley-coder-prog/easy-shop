@@ -1,0 +1,32 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND_STAGING }}" ]; then
+            echo "Missing secret: RENDER_DEPLOY_HOOK_BACKEND_STAGING"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}" ]; then
+            echo "Missing secret: VERCEL_DEPLOY_HOOK_STAGING"
+            exit 1
+          fi
+
+      - name: Trigger Render (Backend Staging)
+        run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND_STAGING }}"
+
+      - name: Trigger Vercel (Frontend Staging)
+        run: curl -fsSL -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}"
