@@ -98,10 +98,25 @@
       </BaseCard>
 
       <!-- Loading State -->
-      <div v-else class="text-center py-12">
+      <div v-else-if="isLoading" class="text-center py-12">
         <Loader size="lg" label="Loading orders" />
         <p class="text-gray-600 mt-4">Verifying your payment...</p>
       </div>
+
+      <!-- Empty/Error State -->
+      <BaseCard v-else class="mb-8">
+        <div class="text-center py-4">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">
+            We couldn't load this order
+          </h2>
+          <p class="text-gray-600">
+            {{
+              errorMessage ||
+              "No matching order was found for this payment reference."
+            }}
+          </p>
+        </div>
+      </BaseCard>
 
       <!-- Action Buttons -->
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -145,6 +160,8 @@ const authStore = useAuthStore();
 const orderStore = useOrderStore();
 
 const orderDetails = ref(null);
+const isLoading = ref(true);
+const errorMessage = ref("");
 
 const orderItems = computed(() => {
   const raw = orderDetails.value?.items_json;
@@ -172,26 +189,43 @@ const goToOrders = () => {
 };
 
 const fetchOrderDetails = async () => {
+  isLoading.value = true;
+  errorMessage.value = "";
+
   try {
     const reference = route.query.reference || route.query.trxref;
-    if (!reference || !authStore.isAuthenticated) {
+
+    if (!authStore.isAuthenticated) {
+      errorMessage.value = "Please log in to view this order confirmation.";
       orderDetails.value = null;
       return;
     }
 
-    // 1) Fetch exact order for this logged-in user + paystack reference
+    if (!reference) {
+      errorMessage.value = "Payment reference is missing from this URL.";
+      orderDetails.value = null;
+      return;
+    }
+
+    // Fetch exact order for this logged-in user + paystack reference
     const byReference = await orderStore.fetchOrderByReference(reference);
     if (byReference) {
       orderDetails.value = byReference;
       return;
     }
 
-    // 2) Fallback to user's own orders only
-    const myOrders = await orderStore.fetchMyOrders();
-    orderDetails.value = myOrders?.[0] || null;
+    errorMessage.value =
+      "No matching order was found for this payment reference.";
+    orderDetails.value = null;
   } catch (error) {
     console.error("Failed to fetch order details:", error);
+    const backendMessage = error?.response?.data?.error;
+    errorMessage.value =
+      backendMessage ||
+      "We could not verify this payment reference for your account.";
     orderDetails.value = null;
+  } finally {
+    isLoading.value = false;
   }
 };
 
