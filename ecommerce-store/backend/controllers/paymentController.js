@@ -4,6 +4,7 @@ const {
   getOrdersService,
   updateOrderService,
 } = require("../models/ordersSheet");
+const { findUserById } = require("../models/usersSheet");
 
 async function createPayment(req, res) {
   try {
@@ -24,6 +25,24 @@ async function createPayment(req, res) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: "Order not found" });
+    }
+
+    const currentUser = await findUserById(req.user.user_id);
+    if (!currentUser) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: "User not found" });
+    }
+
+    const isOwner =
+      (order.email || "").toLowerCase() ===
+      (currentUser.email || "").toLowerCase();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ error: "You cannot pay for this order" });
     }
 
     if (order.payment_status !== "pending") {
