@@ -4,6 +4,8 @@ import { orderService } from "@/api/orders.api";
 export const useOrderStore = defineStore("orders", {
   state: () => ({
     orders: [],
+    myOrders: [],
+    currentOrder: null,
     loading: false,
   }),
 
@@ -29,6 +31,40 @@ export const useOrderStore = defineStore("orders", {
         } else {
           this.orders = [];
         }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchMyOrders() {
+      this.loading = true;
+      try {
+        const res = await orderService.listMine();
+        const payload = res.data;
+
+        if (Array.isArray(payload)) {
+          this.myOrders = payload;
+        } else if (Array.isArray(payload.orders)) {
+          this.myOrders = payload.orders;
+        } else if (payload.orders && Array.isArray(payload.orders.orders)) {
+          this.myOrders = payload.orders.orders;
+        } else {
+          this.myOrders = [];
+        }
+
+        return this.myOrders;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchOrderByReference(reference) {
+      this.loading = true;
+      try {
+        const res = await orderService.getByReference(reference);
+        const order = res?.data?.order || null;
+        this.currentOrder = order;
+        return order;
       } finally {
         this.loading = false;
       }

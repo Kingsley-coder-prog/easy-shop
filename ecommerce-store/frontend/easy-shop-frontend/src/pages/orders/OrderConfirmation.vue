@@ -130,7 +130,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { useOrderStore } from "@/stores/order.store";
@@ -138,91 +139,65 @@ import BaseCard from "@/components/common/BaseCard.vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import Loader from "@/components/common/Loader.vue";
 
-export default {
-  name: "OrderConfirmation",
-  components: {
-    BaseCard,
-    BaseButton,
-    Loader,
-  },
-  data() {
-    return {
-      orderDetails: null,
-      orderItems: [],
-    };
-  },
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const authStore = useAuthStore();
-    const orderStore = useOrderStore();
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+const orderStore = useOrderStore();
 
-    return {
-      route,
-      router,
-      authStore,
-      orderStore,
-    };
-  },
-  async mounted() {
-    try {
-      // Get reference from URL
-      const reference = this.route.query.reference || this.route.query.trxref;
+const orderDetails = ref(null);
 
-      if (!reference) {
-        console.warn("No payment reference found");
-        this.orderDetails = null;
-        return;
-      }
+const orderItems = computed(() => {
+  const raw = orderDetails.value?.items_json;
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
 
-      // Fetch order details
-      await this.fetchOrderDetails();
-    } catch (error) {
-      console.error("Error loading order confirmation:", error);
-      this.orderDetails = null;
-    }
-  },
-  methods: {
-    async fetchOrderDetails() {
-      try {
-        // If user is authenticated, fetch their latest order
-        if (this.authStore.isAuthenticated) {
-          await this.orderStore.fetchOrders();
-          // Get the most recent order
-          if (this.orderStore.orders.length > 0) {
-            this.orderDetails = this.orderStore.orders[0];
-            this.parseOrderItems();
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch order details:", error);
-      }
-    },
-    parseOrderItems() {
-      if (this.orderDetails?.items_json) {
-        try {
-          const items =
-            typeof this.orderDetails.items_json === "string"
-              ? JSON.parse(this.orderDetails.items_json)
-              : this.orderDetails.items_json;
-          this.orderItems = items;
-        } catch (e) {
-          this.orderItems = [];
-        }
-      }
-    },
-    goToProducts() {
-      this.router.push("/products");
-    },
-    goToOrders() {
-      if (this.authStore.isAuthenticated) {
-        this.router.push("/orders");
-      } else {
-        this.router.push("/login");
-      }
-    },
-  },
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+});
+
+const goToProducts = () => {
+  router.push("/products");
 };
+
+const goToOrders = () => {
+  if (authStore.isAuthenticated) {
+    router.push("/orders");
+  } else {
+    router.push("/login");
+  }
+};
+
+const fetchOrderDetails = async () => {
+  try {
+    const reference = route.query.reference || route.query.trxref;
+    if (!reference || !authStore.isAuthenticated) {
+      orderDetails.value = null;
+      return;
+    }
+
+    // 1) Fetch exact order for this logged-in user + paystack reference
+    const byReference = await orderStore.fetchOrderByReference(reference);
+    if (byReference) {
+      orderDetails.value = byReference;
+      return;
+    }
+
+    // 2) Fallback to user's own orders only
+    const myOrders = await orderStore.fetchMyOrders();
+    orderDetails.value = myOrders?.[0] || null;
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+    orderDetails.value = null;
+  }
+};
+
+onMounted(async () => {
+  await fetchOrderDetails();
+});
 </script>
 
 <style scoped>

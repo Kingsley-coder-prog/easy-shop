@@ -95,11 +95,11 @@ import Loader from "@/components/common/Loader.vue";
 const orderStore = useOrderStore();
 
 onMounted(async () => {
-  await orderStore.fetchOrders();
+  await orderStore.fetchMyOrders();
 });
 
 const sortedOrders = computed(() => {
-  const orders = [...(orderStore.orders || [])];
+  const orders = [...(orderStore.myOrders || [])];
   return orders.sort((a, b) => {
     const aDate = new Date(a.created_at || a.updated_at || 0).getTime();
     const bDate = new Date(b.created_at || b.updated_at || 0).getTime();
