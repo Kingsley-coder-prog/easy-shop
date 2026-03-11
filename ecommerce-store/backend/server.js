@@ -30,6 +30,22 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "shopeasy-api",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/ready", (req, res) => {
+  res.status(200).json({
+    status: "ready",
+    service: "shopeasy-api",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use("/api/v1/webhooks", webhookRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/products", productRouter);
