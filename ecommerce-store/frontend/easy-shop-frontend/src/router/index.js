@@ -6,6 +6,7 @@ const Register = () => import("@/pages/auth/Register.vue");
 const Products = () => import("@/pages/products/Products.vue");
 const Cart = () => import("@/pages/cart/Cart.vue");
 const Checkout = () => import("@/pages/checkout/Checkout.vue");
+const Orders = () => import("@/pages/orders/Orders.vue");
 const OrderConfirmation = () => import("@/pages/orders/OrderConfirmation.vue");
 const AdminLayout = () => import("@/layouts/AdminLayout.vue");
 const AdminDashboard = () => import("@/pages/admin/Dashboard.vue");
@@ -32,6 +33,11 @@ const routes = [
   {
     path: "/checkout",
     component: Checkout,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/orders",
+    component: Orders,
     meta: { requiresAuth: true },
   },
   {

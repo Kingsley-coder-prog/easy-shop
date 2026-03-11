@@ -99,7 +99,7 @@
 
       <!-- Loading State -->
       <div v-else class="text-center py-12">
-        <Loader />
+        <Loader size="lg" label="Loading orders" />
         <p class="text-gray-600 mt-4">Verifying your payment...</p>
       </div>
 
