@@ -2,7 +2,7 @@
 
 ## 1) Branch Strategy
 
-- `main` → production releases
+- `master` → production releases
 - `develop` → staging releases
 - `feature/*` → development work, merged into `develop` via PR
 
@@ -10,8 +10,8 @@ Recommended merge flow:
 
 1. `feature/*` → PR into `develop`
 2. `develop` validated and deployed to staging
-3. PR from `develop` → `main`
-4. `main` deploys to production
+3. PR from `develop` → `master`
+4. `master` deploys to production
 
 ---
 
@@ -65,7 +65,7 @@ For `production`, enable required reviewers for manual approval.
 3. Go to **Settings** → **Git** → **Deploy Hooks**
 4. Create hook for branch:
    - `develop` for staging
-   - `main` for production
+   - `master` for production
 5. Copy each URL
 6. Save as:
    - staging: `VERCEL_DEPLOY_HOOK_STAGING`
